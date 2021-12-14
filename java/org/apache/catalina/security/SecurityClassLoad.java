@@ -17,6 +17,8 @@
 package org.apache.catalina.security;
 
 /**
+ * 为了安全加载类，Tomcat中通过org.apache.catalina.security.SecurityClassLoad来预加载Tomcat自身的核心类（如果启用了SecurityManager的话，通过Tomcat的参数-security来开启），
+ * 以免在之后触发AccessControlException的RuntimePermission.
  * Static class used to preload java classes when using the
  * Java SecurityManager so that the defineClassInPackage
  * RuntimePermission does not trigger an AccessControlException.

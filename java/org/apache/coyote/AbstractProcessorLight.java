@@ -28,6 +28,7 @@ import org.apache.tomcat.util.net.SocketEvent;
 import org.apache.tomcat.util.net.SocketWrapperBase;
 
 /**
+ * 这是一个轻量级抽象处理器实现，旨在作为从轻量级升级处理器到HTTP/AJP处理器的所有处理器实现的基础
  * This is a light-weight abstract processor implementation that is intended as
  * a basis for all Processor implementations from the light-weight upgrade
  * processors to the HTTP/AJP processors.
@@ -39,7 +40,7 @@ public abstract class AbstractProcessorLight implements Processor {
 
     @Override
     public SocketState process(SocketWrapperBase<?> socketWrapper, SocketEvent status)
-            throws IOException {
+        throws IOException {
 
         SocketState state = SocketState.CLOSED;
         Iterator<DispatchType> dispatches = null;
@@ -73,15 +74,15 @@ public abstract class AbstractProcessorLight implements Processor {
 
             if (getLog().isDebugEnabled()) {
                 getLog().debug("Socket: [" + socketWrapper +
-                        "], Status in: [" + status +
-                        "], State out: [" + state + "]");
+                    "], Status in: [" + status +
+                    "], State out: [" + state + "]");
             }
 
             if (isAsync()) {
                 state = asyncPostProcess();
                 if (getLog().isDebugEnabled()) {
                     getLog().debug("Socket: [" + socketWrapper +
-                            "], State after async post processing: [" + state + "]");
+                        "], State after async post processing: [" + state + "]");
                 }
             }
 
@@ -91,14 +92,14 @@ public abstract class AbstractProcessorLight implements Processor {
                 dispatches = getIteratorAndClearDispatches();
             }
         } while (state == SocketState.ASYNC_END ||
-                dispatches != null && state != SocketState.CLOSED);
+            dispatches != null && state != SocketState.CLOSED);
 
         return state;
     }
 
 
     private SocketState checkForPipelinedData(SocketState inState, SocketWrapperBase<?> socketWrapper)
-            throws IOException {
+        throws IOException {
         if (inState == SocketState.OPEN) {
             // There may be pipe-lined data to read. If the data isn't
             // processed now, execution will exit this loop and call
@@ -149,9 +150,8 @@ public abstract class AbstractProcessorLight implements Processor {
      * Add an entry to the access log for a failed connection attempt.
      *
      * @param socketWrapper The connection to process
-     *
      * @throws IOException If an I/O error occurs during the processing of the
-     *         request
+     *                     request
      */
     protected void logAccess(SocketWrapperBase<?> socketWrapper) throws IOException {
         // NO-OP by default
@@ -167,12 +167,10 @@ public abstract class AbstractProcessorLight implements Processor {
      * calls to {@link #dispatch(SocketEvent)}. Requests may be pipe-lined.
      *
      * @param socketWrapper The connection to process
-     *
      * @return The state the caller should put the socket in when this method
-     *         returns
-     *
+     * returns
      * @throws IOException If an I/O error occurs during the processing of the
-     *         request
+     *                     request
      */
     protected abstract SocketState service(SocketWrapperBase<?> socketWrapper) throws IOException;
 
@@ -183,12 +181,10 @@ public abstract class AbstractProcessorLight implements Processor {
      * HTTP requests.
      *
      * @param status The event to process
-     *
      * @return The state the caller should put the socket in when this method
-     *         returns
-     *
+     * returns
      * @throws IOException If an I/O error occurs during the processing of the
-     *         request
+     *                     request
      */
     protected abstract SocketState dispatch(SocketEvent status) throws IOException;
 

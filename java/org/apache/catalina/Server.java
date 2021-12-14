@@ -23,6 +23,7 @@ import org.apache.catalina.deploy.NamingResourcesImpl;
 import org.apache.catalina.startup.Catalina;
 
 /**
+ * 表示整个Servlet容器，因此Tomcat运行环境中只有唯一一个Server实例
  * A <code>Server</code> element represents the entire Catalina
  * servlet container.  Its attributes represent the characteristics of
  * the servlet container as a whole.  A <code>Server</code> may contain
@@ -57,7 +58,7 @@ public interface Server extends Lifecycle {
      * @param globalNamingResources The new global naming resources
      */
     public void setGlobalNamingResources
-        (NamingResourcesImpl globalNamingResources);
+    (NamingResourcesImpl globalNamingResources);
 
 
     /**
@@ -68,7 +69,6 @@ public interface Server extends Lifecycle {
 
     /**
      * @return the port number we listen to for shutdown commands.
-     *
      * @see #getPortOffset()
      * @see #getPortWithOffset()
      */
@@ -79,7 +79,6 @@ public interface Server extends Lifecycle {
      * Set the port number we listen to for shutdown commands.
      *
      * @param port The new port number
-     *
      * @see #setPortOffset(int)
      */
     public void setPort(int port);
@@ -201,6 +200,7 @@ public interface Server extends Lifecycle {
 
     /**
      * Get the utility thread count.
+     *
      * @return the thread count
      */
     public int getUtilityThreads();
@@ -208,6 +208,7 @@ public interface Server extends Lifecycle {
 
     /**
      * Set the utility thread count.
+     *
      * @param utilityThreads the new thread count
      */
     public void setUtilityThreads(int utilityThreads);

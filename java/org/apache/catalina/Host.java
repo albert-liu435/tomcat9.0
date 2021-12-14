@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
 
 
 /**
+ * 应用服务器将没有域名抽象为一个虚拟主机，一个Host可以包含多个Context
+ * Host作为一类容器，表示Servlet引擎(即Engine)中的虚拟机,与一个服务器的网络名有关，如域名等。客户端可以使用这个网络名连接服务器，这个名称必须要在DNS服务器上注册
  * A <b>Host</b> is a Container that represents a virtual host in the
  * Catalina servlet engine.  It is useful in the following types of scenarios:
  * <ul>
@@ -79,6 +81,7 @@ public interface Host extends Container {
      * pathname or a relative pathname.
      * If null, the base path defaults to
      * ${catalina.base}/conf/&lt;engine name&gt;/&lt;host name&gt; directory
+     *
      * @param xmlBase The new XML root
      */
     public void setXmlBase(String xmlBase);
@@ -198,6 +201,7 @@ public interface Host extends Container {
     /**
      * Returns <code>true</code> if the Host will attempt to create directories for appBase and xmlBase
      * unless they already exist.
+     *
      * @return true if the Host will attempt to create directories
      */
     public boolean getCreateDirs();

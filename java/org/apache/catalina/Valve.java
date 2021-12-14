@@ -24,6 +24,14 @@ import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 
 /**
+ * 阀是一个与应用程序相关联的请求处理组件
+ * <p>
+ * 特定容器。一系列阀门通常与
+ * <p>
+ * 相互之间形成一条管道。包括阀门的详细合同
+ * <p>
+ * 在下面对invoke（）方法的描述中。
+ *
  * <p>A <b>Valve</b> is a request processing component associated with a
  * particular Container.  A series of Valves are generally associated with
  * each other into a Pipeline.  The detailed contract for a Valve is included
@@ -43,12 +51,15 @@ public interface Valve {
     //-------------------------------------------------------------- Properties
 
     /**
+     * 获取管道下一个阀
+     *
      * @return the next Valve in the pipeline containing this Valve, if any.
      */
     public Valve getNext();
 
 
     /**
+     * 设置管道下一个阀
      * Set the next Valve in the pipeline containing this Valve.
      *
      * @param valve The new next valve, or <code>null</code> if none
@@ -106,13 +117,12 @@ public interface Valve {
      *     returned.
      * </ul>
      *
-     * @param request The servlet request to be processed
+     * @param request  The servlet request to be processed
      * @param response The servlet response to be created
-     *
-     * @exception IOException if an input/output error occurs, or is thrown
-     *  by a subsequently invoked Valve, Filter, or Servlet
-     * @exception ServletException if a servlet error occurs, or is thrown
-     *  by a subsequently invoked Valve, Filter, or Servlet
+     * @throws IOException      if an input/output error occurs, or is thrown
+     *                          by a subsequently invoked Valve, Filter, or Servlet
+     * @throws ServletException if a servlet error occurs, or is thrown
+     *                          by a subsequently invoked Valve, Filter, or Servlet
      */
     public void invoke(Request request, Response response)
         throws IOException, ServletException;

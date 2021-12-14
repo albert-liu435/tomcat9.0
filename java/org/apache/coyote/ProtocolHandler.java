@@ -23,8 +23,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.tomcat.util.net.SSLHostConfig;
 
 /**
+ * 协议处理器，针对不同的协议和I/O方式，提供了不同的实现
+ * <p>
+ * ProtocolHandler包含一个Endpoint用于启动Socket监听，该接口按照I/O方式进行分类实现，如Nio2Endpoint
+ * 还包含一个Processor用于按照指定协议读取数据，并将请求交由容器处理。如Http11NioProcessor表示在NIO的方式下HTTP请求的处理类
  * Abstract the protocol implementation, including threading, etc.
- *
+ * <p>
  * This is the main interface to be implemented by a coyote protocol.
  * Adapter is the main interface to be implemented by a coyote servlet
  * container.
@@ -37,6 +41,7 @@ public interface ProtocolHandler {
 
     /**
      * Return the adapter associated with the protocol handler.
+     *
      * @return the adapter
      */
     public Adapter getAdapter();
@@ -60,6 +65,7 @@ public interface ProtocolHandler {
 
     /**
      * Set the optional executor that will be used by the connector.
+     *
      * @param executor the executor
      */
     public void setExecutor(Executor executor);
@@ -67,6 +73,7 @@ public interface ProtocolHandler {
 
     /**
      * Get the utility executor that should be used by the protocol handler.
+     *
      * @return the executor
      */
     public ScheduledExecutorService getUtilityExecutor();
@@ -74,6 +81,7 @@ public interface ProtocolHandler {
 
     /**
      * Set the utility executor that should be used by the protocol handler.
+     *
      * @param utilityExecutor the executor
      */
     public void setUtilityExecutor(ScheduledExecutorService utilityExecutor);
@@ -88,6 +96,7 @@ public interface ProtocolHandler {
 
 
     /**
+     * 启动协议
      * Start the protocol.
      *
      * @throws Exception If the protocol handler fails to start
@@ -140,9 +149,8 @@ public interface ProtocolHandler {
      * method will return when all of the client connections have closed or the
      * method has been waiting for {@code waitTimeMillis}.
      *
-     * @param waitMillis    The maximum time to wait in milliseconds for the
-     *                      client connections to close.
-     *
+     * @param waitMillis The maximum time to wait in milliseconds for the
+     *                   client connections to close.
      * @return The wait time, if any remaining when the method returned
      */
     public long awaitConnectionsClose(long waitMillis);
@@ -152,7 +160,7 @@ public interface ProtocolHandler {
      * Requires APR/native library
      *
      * @return <code>true</code> if this Protocol Handler requires the
-     *         APR/native library, otherwise <code>false</code>
+     * APR/native library, otherwise <code>false</code>
      */
     public boolean isAprRequired();
 
@@ -161,13 +169,14 @@ public interface ProtocolHandler {
      * Does this ProtocolHandler support sendfile?
      *
      * @return <code>true</code> if this Protocol Handler supports sendfile,
-     *         otherwise <code>false</code>
+     * otherwise <code>false</code>
      */
     public boolean isSendfileSupported();
 
 
     /**
      * Add a new SSL configuration for a virtual host.
+     *
      * @param sslHostConfig the configuration
      */
     public void addSslHostConfig(SSLHostConfig sslHostConfig);
@@ -176,6 +185,7 @@ public interface ProtocolHandler {
     /**
      * Find all configured SSL virtual host configurations which will be used
      * by SNI.
+     *
      * @return the configurations
      */
     public SSLHostConfig[] findSslHostConfigs();
@@ -183,6 +193,7 @@ public interface ProtocolHandler {
 
     /**
      * Add a new protocol for used by HTTP/1.1 upgrade or ALPN.
+     *
      * @param upgradeProtocol the protocol
      */
     public void addUpgradeProtocol(UpgradeProtocol upgradeProtocol);
@@ -190,6 +201,7 @@ public interface ProtocolHandler {
 
     /**
      * Return all configured upgrade protocols.
+     *
      * @return the protocols
      */
     public UpgradeProtocol[] findUpgradeProtocols();
@@ -199,6 +211,7 @@ public interface ProtocolHandler {
      * Some protocols, like AJP, have a packet length that
      * shouldn't be exceeded, and this can be used to adjust the buffering
      * used by the application layer.
+     *
      * @return the desired buffer size, or -1 if not relevant
      */
     public default int getDesiredBufferSize() {
@@ -210,6 +223,7 @@ public interface ProtocolHandler {
      * The default behavior is to identify connectors uniquely with address
      * and port. However, certain connectors are not using that and need
      * some other identifier, which then can be used as a replacement.
+     *
      * @return the id
      */
     public default String getId() {
@@ -219,31 +233,32 @@ public interface ProtocolHandler {
 
     /**
      * Create a new ProtocolHandler for the given protocol.
+     *
      * @param protocol the protocol
-     * @param apr if <code>true</code> the APR protcol handler will be used
+     * @param apr      if <code>true</code> the APR protcol handler will be used
      * @return the newly instantiated protocol handler
-     * @throws ClassNotFoundException Specified protocol was not found
-     * @throws InstantiationException Specified protocol could not be instantiated
-     * @throws IllegalAccessException Exception occurred
-     * @throws IllegalArgumentException Exception occurred
+     * @throws ClassNotFoundException    Specified protocol was not found
+     * @throws InstantiationException    Specified protocol could not be instantiated
+     * @throws IllegalAccessException    Exception occurred
+     * @throws IllegalArgumentException  Exception occurred
      * @throws InvocationTargetException Exception occurred
-     * @throws NoSuchMethodException Exception occurred
-     * @throws SecurityException Exception occurred
+     * @throws NoSuchMethodException     Exception occurred
+     * @throws SecurityException         Exception occurred
      */
     public static ProtocolHandler create(String protocol, boolean apr)
-            throws ClassNotFoundException, InstantiationException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+        throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+        IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         if (protocol == null || "HTTP/1.1".equals(protocol)
-                || (!apr && org.apache.coyote.http11.Http11NioProtocol.class.getName().equals(protocol))
-                || (apr && org.apache.coyote.http11.Http11AprProtocol.class.getName().equals(protocol))) {
+            || (!apr && org.apache.coyote.http11.Http11NioProtocol.class.getName().equals(protocol))
+            || (apr && org.apache.coyote.http11.Http11AprProtocol.class.getName().equals(protocol))) {
             if (apr) {
                 return new org.apache.coyote.http11.Http11AprProtocol();
             } else {
                 return new org.apache.coyote.http11.Http11NioProtocol();
             }
         } else if ("AJP/1.3".equals(protocol)
-                || (!apr && org.apache.coyote.ajp.AjpNioProtocol.class.getName().equals(protocol))
-                || (apr && org.apache.coyote.ajp.AjpAprProtocol.class.getName().equals(protocol))) {
+            || (!apr && org.apache.coyote.ajp.AjpNioProtocol.class.getName().equals(protocol))
+            || (apr && org.apache.coyote.ajp.AjpAprProtocol.class.getName().equals(protocol))) {
             if (apr) {
                 return new org.apache.coyote.ajp.AjpAprProtocol();
             } else {

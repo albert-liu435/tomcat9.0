@@ -29,6 +29,7 @@ import org.apache.juli.logging.LogFactory;
 
 
 /**
+ * 读取bootstrap Catalina configuration的工具类用于加载tomcat目录下的conf/catalina.properties文件
  * Utility class to read the bootstrap Catalina configuration.
  *
  * @author Remy Maucherat
@@ -46,6 +47,8 @@ public class CatalinaProperties {
 
 
     /**
+     * Tomcat加载不同的classLoader，是通过String value = CatalinaProperties.getProperty(name + ".loader");这个配置来加载类的.
+     *
      * @param name The property name
      * @return specified property value
      */
@@ -55,6 +58,7 @@ public class CatalinaProperties {
 
 
     /**
+     * 加载配置文件信息
      * Load properties.
      */
     private static void loadProperties() {
@@ -75,7 +79,7 @@ public class CatalinaProperties {
         } catch (Throwable t) {
             handleThrowable(t);
         }
-
+        //加载catalina.properties文件
         if (is == null) {
             try {
                 File home = new File(Bootstrap.getCatalinaBase());
@@ -119,6 +123,7 @@ public class CatalinaProperties {
             properties = new Properties();
         }
 
+        //将配置信息注册到系统环境变量中
         // Register the properties as system properties
         Enumeration<?> enumeration = properties.propertyNames();
         while (enumeration.hasMoreElements()) {

@@ -18,6 +18,7 @@ package org.apache.catalina;
 
 
 /**
+ * 生命周期接口，用于定义了声明周期的方法
  * Common interface for component life cycle methods.  Catalina components
  * may implement this interface (as well as the appropriate interface(s) for
  * the functionality they support) in order to provide a consistent mechanism
@@ -85,7 +86,7 @@ public interface Lifecycle {
 
     // ----------------------------------------------------- Manifest Constants
 
-
+    ////生命周期内的六个事件
     /**
      * The LifecycleEvent type for the "component before init" event.
      */
@@ -172,8 +173,10 @@ public interface Lifecycle {
 
     // --------------------------------------------------------- Public Methods
 
+    //观察者的管理与通知方法
 
     /**
+     * 添加事件监听器
      * Add a LifecycleEvent listener to this component.
      *
      * @param listener The listener to add
@@ -182,16 +185,18 @@ public interface Lifecycle {
 
 
     /**
+     * 获取事件监听器
      * Get the life cycle listeners associated with this life cycle.
      *
      * @return An array containing the life cycle listeners associated with this
-     *         life cycle. If this component has no listeners registered, a
-     *         zero-length array is returned.
+     * life cycle. If this component has no listeners registered, a
+     * zero-length array is returned.
      */
     public LifecycleListener[] findLifecycleListeners();
 
 
     /**
+     * 移除事件监听器
      * Remove a LifecycleEvent listener from this component.
      *
      * @param listener The listener to remove
@@ -200,6 +205,7 @@ public interface Lifecycle {
 
 
     /**
+     * 初始化组件用于启动
      * Prepare the component for starting. This method should perform any
      * initialization required post object creation. The following
      * {@link LifecycleEvent}s will be fired in the following order:
@@ -208,12 +214,13 @@ public interface Lifecycle {
      *                   initialization.</li>
      * </ol>
      *
-     * @exception LifecycleException if this component detects a fatal error
-     *  that prevents this component from being used
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that prevents this component from being used
      */
     public void init() throws LifecycleException;
 
     /**
+     * 启动组件
      * Prepare for the beginning of active use of the public methods other than
      * property getters/setters and life cycle methods of this component. This
      * method should be called before any of the public methods other than
@@ -236,13 +243,14 @@ public interface Lifecycle {
      *                          </li>
      * </ol>
      *
-     * @exception LifecycleException if this component detects a fatal error
-     *  that prevents this component from being used
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that prevents this component from being used
      */
     public void start() throws LifecycleException;
 
 
     /**
+     * 停止组件
      * Gracefully terminate the active use of the public methods other than
      * property getters/setters and life cycle methods of this component. Once
      * the STOP_EVENT is fired, the public methods other than property
@@ -263,19 +271,20 @@ public interface Lifecycle {
      *                         transitions to {@link LifecycleState#STOPPED}.
      *                         </li>
      * </ol>
-     *
+     * <p>
      * Note that if transitioning from {@link LifecycleState#FAILED} then the
      * three events above will be fired but the component will transition
      * directly from {@link LifecycleState#FAILED} to
      * {@link LifecycleState#STOPPING}, bypassing
      * {@link LifecycleState#STOPPING_PREP}
      *
-     * @exception LifecycleException if this component detects a fatal error
-     *  that needs to be reported
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that needs to be reported
      */
     public void stop() throws LifecycleException;
 
     /**
+     * 销毁组件
      * Prepare to discard the object. The following {@link LifecycleEvent}s will
      * be fired in the following order:
      * <ol>
@@ -283,8 +292,8 @@ public interface Lifecycle {
      *                      destruction.</li>
      * </ol>
      *
-     * @exception LifecycleException if this component detects a fatal error
-     *  that prevents this component from being used
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that prevents this component from being used
      */
     public void destroy() throws LifecycleException;
 
@@ -309,6 +318,7 @@ public interface Lifecycle {
 
 
     /**
+     * 标记接口，用于表明该实例只能被应用与一次
      * Marker interface used to indicate that the instance should only be used
      * once. Calling {@link #stop()} on an instance that supports this interface
      * will automatically call {@link #destroy()} after {@link #stop()}

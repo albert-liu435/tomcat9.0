@@ -20,6 +20,9 @@ import org.apache.catalina.connector.Connector;
 import org.apache.catalina.mapper.Mapper;
 
 /**
+ * 一个Service负责维护多个Connector和一个Container,这样来自Connector的请求只能由它所属的Service维护的Container处理
+ * <p>
+ * 在一个Tomcat实例内可以包含任意多个Service实例，她们彼此独立。
  * A <strong>Service</strong> is a group of one or more
  * <strong>Connectors</strong> that share a single <strong>Container</strong>
  * to process their incoming requests.  This arrangement allows, for example,
@@ -122,18 +125,21 @@ public interface Service extends Lifecycle {
 
     /**
      * Adds a named executor to the service
+     *
      * @param ex Executor
      */
     public void addExecutor(Executor ex);
 
     /**
      * Retrieves all executors
+     *
      * @return Executor[]
      */
     public Executor[] findExecutors();
 
     /**
      * Retrieves executor by name, null if not found
+     *
      * @param name String
      * @return Executor
      */
@@ -141,6 +147,7 @@ public interface Service extends Lifecycle {
 
     /**
      * Removes an executor from the service
+     *
      * @param ex Executor
      */
     public void removeExecutor(Executor ex);

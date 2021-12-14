@@ -17,6 +17,11 @@
 package org.apache.catalina;
 
 /**
+ * Engine表示整个Servlet引擎，而非Servlet容器。表示整个Servlet容器的是Server。引擎只负责请求的处理，不需要开来请求连接、协议等的处理。
+ *
+ *
+ *
+ * Engine既可以包含Host，又可以包含Context,这是由具体的Engine实现确定的。
  * An <b>Engine</b> is a Container that represents the entire Catalina servlet
  * engine.  It is useful in the following types of scenarios:
  * <ul>
@@ -66,7 +71,7 @@ public interface Engine extends Container {
      * Set the JvmRouteId for this engine.
      *
      * @param jvmRouteId the (new) JVM Route ID. Each Engine within a cluster
-     *        must have a unique JVM Route ID.
+     *                   must have a unique JVM Route ID.
      */
     public void setJvmRoute(String jvmRouteId);
 

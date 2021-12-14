@@ -19,6 +19,11 @@ package org.apache.catalina;
 import java.util.Set;
 
 /**
+ * Pipeline用于构造职责链,Valve代表职责链上的每个处理器。
+ *
+ * Pipeline中维护了一个基础的Valve，它始终位于Pipeline的末端(即最后执行).封装了具体的请求处理和输出响应的过程。然后通过addValve()
+ * 方法，我们可以为Pipeline添加其他的Valve。后添加的Valve位于基础Valve之前，并按照添加顺序执行。Pipeline通过获得首个Valve来启动整个链条的执行。
+ *
  * <p>Interface describing a collection of Valves that should be executed
  * in sequence when the <code>invoke()</code> method is invoked.  It is
  * required that a Valve somewhere in the pipeline (usually the last one)

@@ -23,6 +23,7 @@ import org.apache.tomcat.util.net.NioEndpoint;
 
 
 /**
+ * 基于NIO的HTTP协议处理器
  * Abstract the protocol implementation, including threading, etc.
  * Processor is single threaded and specific to stream-based protocols,
  * will not fit Jk protocols like JNI.
@@ -41,7 +42,9 @@ public class Http11NioProtocol extends AbstractHttp11JsseProtocol<NioChannel> {
 
 
     @Override
-    protected Log getLog() { return log; }
+    protected Log getLog() {
+        return log;
+    }
 
 
     // -------------------- Pool setup --------------------
@@ -50,7 +53,6 @@ public class Http11NioProtocol extends AbstractHttp11JsseProtocol<NioChannel> {
      * NO-OP.
      *
      * @param count Unused
-     *
      * @deprecated This setter will be removed in Tomcat 10.
      */
     @Deprecated
@@ -61,7 +63,6 @@ public class Http11NioProtocol extends AbstractHttp11JsseProtocol<NioChannel> {
      * Always returns 1.
      *
      * @return 1
-     *
      * @deprecated This getter will be removed in Tomcat 10.
      */
     @Deprecated
@@ -70,19 +71,19 @@ public class Http11NioProtocol extends AbstractHttp11JsseProtocol<NioChannel> {
     }
 
     public void setSelectorTimeout(long timeout) {
-        ((NioEndpoint)getEndpoint()).setSelectorTimeout(timeout);
+        ((NioEndpoint) getEndpoint()).setSelectorTimeout(timeout);
     }
 
     public long getSelectorTimeout() {
-        return ((NioEndpoint)getEndpoint()).getSelectorTimeout();
+        return ((NioEndpoint) getEndpoint()).getSelectorTimeout();
     }
 
     public void setPollerThreadPriority(int threadPriority) {
-        ((NioEndpoint)getEndpoint()).setPollerThreadPriority(threadPriority);
+        ((NioEndpoint) getEndpoint()).setPollerThreadPriority(threadPriority);
     }
 
     public int getPollerThreadPriority() {
-      return ((NioEndpoint)getEndpoint()).getPollerThreadPriority();
+        return ((NioEndpoint) getEndpoint()).getPollerThreadPriority();
     }
 
 
@@ -91,7 +92,7 @@ public class Http11NioProtocol extends AbstractHttp11JsseProtocol<NioChannel> {
     @Override
     protected String getNamePrefix() {
         if (isSSLEnabled()) {
-            return "https-" + getSslImplementationShortName()+ "-nio";
+            return "https-" + getSslImplementationShortName() + "-nio";
         } else {
             return "http-nio";
         }

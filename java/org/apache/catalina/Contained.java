@@ -17,6 +17,7 @@
 package org.apache.catalina;
 
 /**
+ * 解耦接口，指定一个实现类最多与一个容器实例关联
  * <p>Decoupling interface which specifies that an implementing class is
  * associated with at most one <strong>Container</strong> instance.</p>
  *
@@ -26,20 +27,22 @@ package org.apache.catalina;
 public interface Contained {
 
     /**
+     * 获取一个关联的容器
      * Get the {@link Container} with which this instance is associated.
      *
      * @return The Container with which this instance is associated or
-     *         <code>null</code> if not associated with a Container
+     * <code>null</code> if not associated with a Container
      */
     Container getContainer();
 
 
     /**
+     * 设置一个关联容器
      * Set the <code>Container</code> with which this instance is associated.
      *
      * @param container The Container instance with which this instance is to
-     *  be associated, or <code>null</code> to disassociate this instance
-     *  from any Container
+     *                  be associated, or <code>null</code> to disassociate this instance
+     *                  from any Container
      */
     void setContainer(Container container);
 }
