@@ -398,14 +398,18 @@ public class Catalina {
         digester.setUseContextClassLoader(true);
 
         // Configure the actions we will be using
+        //创建Server实例
         digester.addObjectCreate("Server",
             "org.apache.catalina.core.StandardServer",
             "className");
         digester.addSetProperties("Server");
+        //将Server对象设置到Catalina对象中
         digester.addSetNext("Server",
             "setServer",
             "org.apache.catalina.Server");
 
+        //创建全局J2EE企业命名上下文
+        //根据GlobalNamingResources配置创建全局的J2EE企业命名上下文(JNDI),设置属性并将其设置到Server实例当中(setGlobalNamingResources)
         digester.addObjectCreate("Server/GlobalNamingResources",
             "org.apache.catalina.deploy.NamingResourcesImpl");
         digester.addSetProperties("Server/GlobalNamingResources");
@@ -413,6 +417,7 @@ public class Catalina {
             "setGlobalNamingResources",
             "org.apache.catalina.deploy.NamingResourcesImpl");
 
+        //为Server添加尚明周期监听器
         digester.addRule("Server/Listener",
             new ListenerCreateRule(null, "className"));
         digester.addSetProperties("Server/Listener");
@@ -420,6 +425,8 @@ public class Catalina {
             "addLifecycleListener",
             "org.apache.catalina.LifecycleListener");
 
+        //构造Service实例
+        //为Server添加Service实例。
         digester.addObjectCreate("Server/Service",
             "org.apache.catalina.core.StandardService",
             "className");
@@ -428,6 +435,7 @@ public class Catalina {
             "addService",
             "org.apache.catalina.Service");
 
+        //为Service添加声明周期监听器
         digester.addObjectCreate("Server/Service/Listener",
             null, // MUST be specified in the element
             "className");
@@ -437,6 +445,7 @@ public class Catalina {
             "org.apache.catalina.LifecycleListener");
 
         //Executor
+        //为Service添加Executor
         digester.addObjectCreate("Server/Service/Executor",
             "org.apache.catalina.core.StandardThreadExecutor",
             "className");
@@ -446,6 +455,7 @@ public class Catalina {
             "addExecutor",
             "org.apache.catalina.Executor");
 
+        //为Service添加Connector
         digester.addRule("Server/Service/Connector",
             new ConnectorCreateRule());
         digester.addSetProperties("Server/Service/Connector",
@@ -456,6 +466,7 @@ public class Catalina {
 
         digester.addRule("Server/Service/Connector", new AddPortOffsetRule());
 
+        //为Connector添加虚拟主机SSL配置
         digester.addObjectCreate("Server/Service/Connector/SSLHostConfig",
             "org.apache.tomcat.util.net.SSLHostConfig");
         digester.addSetProperties("Server/Service/Connector/SSLHostConfig");
@@ -484,6 +495,7 @@ public class Catalina {
             "addCmd",
             "org.apache.tomcat.util.net.openssl.OpenSSLConfCmd");
 
+        //为Connector添加生命周期监听器
         digester.addObjectCreate("Server/Service/Connector/Listener",
             null, // MUST be specified in the element
             "className");
@@ -492,6 +504,7 @@ public class Catalina {
             "addLifecycleListener",
             "org.apache.catalina.LifecycleListener");
 
+        //为Connector添加升级协议
         digester.addObjectCreate("Server/Service/Connector/UpgradeProtocol",
             null, // MUST be specified in the element
             "className");
@@ -501,6 +514,7 @@ public class Catalina {
             "org.apache.coyote.UpgradeProtocol");
 
         // Add RuleSets for nested elements
+        //添加子元素解析规则
         digester.addRuleSet(new NamingRuleSet("Server/GlobalNamingResources/"));
         digester.addRuleSet(new EngineRuleSet("Server/Service/"));
         digester.addRuleSet(new HostRuleSet("Server/Service/Engine/"));
@@ -571,7 +585,7 @@ public class Catalina {
      */
     protected void parseServerXml(boolean start) {
         // Set configuration source
-        //设置资源路径
+        //设置资源路径 getConfigFile为conf/server.xml
         ConfigFileLoader.setSource(new CatalinaBaseConfigurationSource(Bootstrap.getCatalinaBaseFile(), getConfigFile()));
         File file = configFile();
 

@@ -24,6 +24,7 @@ import org.xml.sax.Attributes;
 
 
 /**
+ * 当begin()方法调用时，Digester使用标准的JavaBean属性操作方式(setter)将当前XML节点的属性值设置到栈顶部的对象中(Java Bean属性名与XML节点属性名向匹配)
  * <p>Rule implementation that sets properties on the object at the top of the
  * stack, based on attributes with corresponding names.</p>
  */
@@ -34,7 +35,7 @@ public class SetPropertiesRule extends Rule {
         void endSetPropertiesRule();
     }
 
-    protected final HashMap<String,String> excludes;
+    protected final HashMap<String, String> excludes;
 
     public SetPropertiesRule() {
         excludes = null;
@@ -52,27 +53,27 @@ public class SetPropertiesRule extends Rule {
     /**
      * Process the beginning of this element.
      *
-     * @param namespace the namespace URI of the matching element, or an
-     *   empty string if the parser is not namespace aware or the element has
-     *   no namespace
-     * @param theName the local name if the parser is namespace aware, or just
-     *   the element name otherwise
+     * @param namespace  the namespace URI of the matching element, or an
+     *                   empty string if the parser is not namespace aware or the element has
+     *                   no namespace
+     * @param theName    the local name if the parser is namespace aware, or just
+     *                   the element name otherwise
      * @param attributes The attribute list for this element
      */
     @Override
     public void begin(String namespace, String theName, Attributes attributes)
-            throws Exception {
+        throws Exception {
 
         // Populate the corresponding properties of the top object
         Object top = digester.peek();
         if (digester.log.isDebugEnabled()) {
             if (top != null) {
                 digester.log.debug("[SetPropertiesRule]{" + digester.match +
-                                   "} Set " + top.getClass().getName() +
-                                   " properties");
+                    "} Set " + top.getClass().getName() +
+                    " properties");
             } else {
                 digester.log.debug("[SetPropertiesRule]{" + digester.match +
-                                   "} Set NULL properties");
+                    "} Set NULL properties");
             }
         }
         StringBuilder code = digester.getGeneratedCode();
@@ -90,8 +91,8 @@ public class SetPropertiesRule extends Rule {
 
             if (digester.log.isDebugEnabled()) {
                 digester.log.debug("[SetPropertiesRule]{" + digester.match +
-                        "} Setting property '" + name + "' to '" +
-                        value + "'");
+                    "} Setting property '" + name + "' to '" +
+                    value + "'");
             }
             if (!digester.isFakeAttribute(top, name) && (excludes == null || !excludes.containsKey(name))) {
                 StringBuilder actualMethod = null;

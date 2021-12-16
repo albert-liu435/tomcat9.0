@@ -19,6 +19,7 @@ package org.apache.tomcat.util.digester;
 import java.util.List;
 
 /**
+ *
  * Public interface defining a collection of Rule instances (and corresponding
  * matching patterns) plus an implementation of a matching policy that selects
  * the rules that match a particular pattern of nested elements discovered
@@ -49,7 +50,7 @@ public interface Rules {
      * Register a new Rule instance matching the specified pattern.
      *
      * @param pattern Nesting pattern to be matched for this Rule
-     * @param rule Rule instance to be registered
+     * @param rule    Rule instance to be registered
      */
     public void add(String pattern, Rule rule);
 
@@ -68,8 +69,8 @@ public interface Rules {
      * method.
      *
      * @param namespaceURI Namespace URI for which to select matching rules,
-     *  or <code>null</code> to match regardless of namespace URI
-     * @param pattern Nesting pattern to be matched
+     *                     or <code>null</code> to match regardless of namespace URI
+     * @param pattern      Nesting pattern to be matched
      * @return a rules list
      */
     public List<Rule> match(String namespaceURI, String pattern);
@@ -81,6 +82,7 @@ public interface Rules {
      * instance has been registered, they <strong>must</strong> be returned
      * in the order originally registered through the <code>add()</code>
      * method.
+     *
      * @return a rules list
      */
     public List<Rule> rules();

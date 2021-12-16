@@ -20,6 +20,7 @@ import org.xml.sax.Attributes;
 
 
 /**
+ * ObjectCreateRule规则的一个变体，拥有处理Java类无默认构造方法的情况，或者需要在Digester处理该对象之前执行某些操作的情况
  * <p>Rule implementation that uses an {@link ObjectCreationFactory} to create
  * a new object which it pushes onto the object stack.  When the element is
  * complete, the object will be popped.</p>
@@ -34,9 +35,13 @@ public class FactoryCreateRule extends Rule {
 
     // ----------------------------------------------------------- Fields
 
-    /** Should exceptions thrown by the factory be ignored? */
+    /**
+     * Should exceptions thrown by the factory be ignored?
+     */
     private boolean ignoreCreateExceptions;
-    /** Stock to manage */
+    /**
+     * Stock to manage
+     */
     private ArrayStack<Boolean> exceptionIgnoredStack;
 
 
@@ -46,13 +51,13 @@ public class FactoryCreateRule extends Rule {
      * Construct a factory create rule using the given, already instantiated,
      * {@link ObjectCreationFactory}.
      *
-     * @param creationFactory called on to create the object.
+     * @param creationFactory        called on to create the object.
      * @param ignoreCreateExceptions if true, exceptions thrown by the object
-     *  creation factory will be ignored.
+     *                               creation factory will be ignored.
      */
     public FactoryCreateRule(
-                            ObjectCreationFactory creationFactory,
-                            boolean ignoreCreateExceptions) {
+        ObjectCreationFactory creationFactory,
+        boolean ignoreCreateExceptions) {
 
         this.creationFactory = creationFactory;
         this.ignoreCreateExceptions = ignoreCreateExceptions;
@@ -91,7 +96,7 @@ public class FactoryCreateRule extends Rule {
 
                 if (digester.log.isDebugEnabled()) {
                     digester.log.debug("[FactoryCreateRule]{" + digester.match +
-                            "} New " + instance.getClass().getName());
+                        "} New " + instance.getClass().getName());
                 }
                 digester.push(instance);
                 exceptionIgnoredStack.push(Boolean.FALSE);
@@ -113,7 +118,7 @@ public class FactoryCreateRule extends Rule {
 
             if (digester.log.isDebugEnabled()) {
                 digester.log.debug("[FactoryCreateRule]{" + digester.match +
-                        "} New " + instance.getClass().getName());
+                    "} New " + instance.getClass().getName());
             }
             digester.push(instance);
         }
@@ -129,7 +134,7 @@ public class FactoryCreateRule extends Rule {
         // check if object was created
         // this only happens if an exception was thrown and we're ignoring them
         if (
-                ignoreCreateExceptions &&
+            ignoreCreateExceptions &&
                 exceptionIgnoredStack != null &&
                 !(exceptionIgnoredStack.empty())) {
 
@@ -146,7 +151,7 @@ public class FactoryCreateRule extends Rule {
         Object top = digester.pop();
         if (digester.log.isDebugEnabled()) {
             digester.log.debug("[FactoryCreateRule]{" + digester.match +
-                    "} Pop " + top.getClass().getName());
+                "} Pop " + top.getClass().getName());
         }
 
     }

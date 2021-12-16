@@ -127,7 +127,7 @@ public interface ConfigurationSource {
         }
     }
 
-    /**
+    /**返回主conf/server的内容。xml文件
      * Returns the contents of the main conf/server.xml file.
      *
      * @return the server.xml as an InputStream

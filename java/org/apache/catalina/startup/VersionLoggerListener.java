@@ -32,6 +32,7 @@ import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.res.StringManager;
 
 /**
+ * 在Server初始化之前打印操作系统、JVM以及服务器的版本信息
  * Logs version information on startup.
  * <p>
  * This listener must only be nested within {@link Server} elements and should
@@ -86,7 +87,7 @@ public class VersionLoggerListener implements LifecycleListener {
         if (Lifecycle.BEFORE_INIT_EVENT.equals(event.getType())) {
             if (!(event.getLifecycle() instanceof Server)) {
                 log.warn(sm.getString("listener.notServer",
-                        event.getLifecycle().getClass().getSimpleName()));
+                    event.getLifecycle().getClass().getSimpleName()));
             }
             log();
         }
@@ -95,27 +96,27 @@ public class VersionLoggerListener implements LifecycleListener {
 
     private void log() {
         log.info(sm.getString("versionLoggerListener.serverInfo.server.version",
-                ServerInfo.getServerInfo()));
+            ServerInfo.getServerInfo()));
         log.info(sm.getString("versionLoggerListener.serverInfo.server.built",
-                ServerInfo.getServerBuilt()));
+            ServerInfo.getServerBuilt()));
         log.info(sm.getString("versionLoggerListener.serverInfo.server.number",
-                ServerInfo.getServerNumber()));
+            ServerInfo.getServerNumber()));
         log.info(sm.getString("versionLoggerListener.os.name",
-                System.getProperty("os.name")));
+            System.getProperty("os.name")));
         log.info(sm.getString("versionLoggerListener.os.version",
-                System.getProperty("os.version")));
+            System.getProperty("os.version")));
         log.info(sm.getString("versionLoggerListener.os.arch",
-                System.getProperty("os.arch")));
+            System.getProperty("os.arch")));
         log.info(sm.getString("versionLoggerListener.java.home",
-                System.getProperty("java.home")));
+            System.getProperty("java.home")));
         log.info(sm.getString("versionLoggerListener.vm.version",
-                System.getProperty("java.runtime.version")));
+            System.getProperty("java.runtime.version")));
         log.info(sm.getString("versionLoggerListener.vm.vendor",
-                System.getProperty("java.vm.vendor")));
+            System.getProperty("java.vm.vendor")));
         log.info(sm.getString("versionLoggerListener.catalina.base",
-                System.getProperty("catalina.base")));
+            System.getProperty("catalina.base")));
         log.info(sm.getString("versionLoggerListener.catalina.home",
-                System.getProperty("catalina.home")));
+            System.getProperty("catalina.home")));
 
         if (logArgs) {
             List<String> args = ManagementFactory.getRuntimeMXBean().getInputArguments();

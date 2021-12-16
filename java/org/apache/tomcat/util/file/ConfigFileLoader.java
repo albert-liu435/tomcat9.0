@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.URI;
 
 /**
+ * 用于加载文件的流对象
  * This class is used to obtain {@link InputStream}s for configuration files
  * from a given location String. This allows greater flexibility than these
  * files having to be loaded directly from a file system.
@@ -54,10 +55,8 @@ public class ConfigFileLoader {
      * @param location The location for the resource of interest. The location
      *                 may be a URL or a file path. Relative paths will be
      *                 resolved against CATALINA_BASE.
-     *
      * @return The InputStream for the given resource. The caller is responsible
-     *         for closing this stream when it is no longer used.
-     *
+     * for closing this stream when it is no longer used.
      * @throws IOException If an InputStream cannot be created using the
      *                     provided location
      */

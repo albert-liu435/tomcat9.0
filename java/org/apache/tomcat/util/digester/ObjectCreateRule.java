@@ -21,6 +21,10 @@ import org.xml.sax.Attributes;
 
 
 /**
+ * 创建新对象并将其推送到对象堆栈上的规则实现。当元素完成时，对象将弹出
+ * <p>
+ * 当begin()方法调用时，该规则会将指定的Java类实例化,并将其放入对象栈中，具体的Java类可由该规则的构造方法传入，也可以通过当前处理XML节点的某个属性指定，属性名称
+ * 通过构造方法传入，当end()方法调用时，该规则创建的对象将从栈中取出
  * Rule implementation that creates a new object and pushes it
  * onto the object stack.  When the element is complete, the
  * object will be popped
@@ -48,9 +52,9 @@ public class ObjectCreateRule extends Rule {
      * Construct an object create rule with the specified class name and an
      * optional attribute name containing an override.
      *
-     * @param className Java class name of the object to be created
+     * @param className     Java class name of the object to be created
      * @param attributeName Attribute name which, if present, contains an
-     *  override of the class name to create
+     *                      override of the class name to create
      */
     public ObjectCreateRule(String className,
                             String attributeName) {
@@ -79,18 +83,20 @@ public class ObjectCreateRule extends Rule {
 
 
     /**
+     * 当begin()方法调用时，该规则会将指定的Java类实例化,并将其放入对象栈中，具体的Java类可由该规则的构造方法传入，也可以通过当前处理XML节点的某个属性指定，属性名称
+     * 通过构造方法传入，当end()方法调用时，该规则创建的对象将从栈中取出
      * Process the beginning of this element.
      *
-     * @param namespace the namespace URI of the matching element, or an
-     *   empty string if the parser is not namespace aware or the element has
-     *   no namespace
-     * @param name the local name if the parser is namespace aware, or just
-     *   the element name otherwise
+     * @param namespace  the namespace URI of the matching element, or an
+     *                   empty string if the parser is not namespace aware or the element has
+     *                   no namespace
+     * @param name       the local name if the parser is namespace aware, or just
+     *                   the element name otherwise
      * @param attributes The attribute list for this element
      */
     @Override
     public void begin(String namespace, String name, Attributes attributes)
-            throws Exception {
+        throws Exception {
 
         String realClassName = getRealClassName(attributes);
 
@@ -115,6 +121,7 @@ public class ObjectCreateRule extends Rule {
 
     /**
      * Return the actual class name of the class to be instantiated.
+     *
      * @param attributes The attribute list for this element
      * @return the class name
      */
@@ -135,10 +142,10 @@ public class ObjectCreateRule extends Rule {
      * Process the end of this element.
      *
      * @param namespace the namespace URI of the matching element, or an
-     *   empty string if the parser is not namespace aware or the element has
-     *   no namespace
-     * @param name the local name if the parser is namespace aware, or just
-     *   the element name otherwise
+     *                  empty string if the parser is not namespace aware or the element has
+     *                  no namespace
+     * @param name      the local name if the parser is namespace aware, or just
+     *                  the element name otherwise
      */
     @Override
     public void end(String namespace, String name) throws Exception {
@@ -146,7 +153,7 @@ public class ObjectCreateRule extends Rule {
         Object top = digester.pop();
         if (digester.log.isDebugEnabled()) {
             digester.log.debug("[ObjectCreateRule]{" + digester.match +
-                    "} Pop " + top.getClass().getName());
+                "} Pop " + top.getClass().getName());
         }
 
     }

@@ -40,6 +40,7 @@ import org.apache.tomcat.util.res.StringManager;
 
 
 /**
+ * 在Server启动时，将JNDI资源注册为MBEAN进行管理
  * Implementation of <code>LifecycleListener</code> that instantiates the
  * set of MBeans associated with global JNDI resources that are subject to
  * management.
@@ -76,7 +77,7 @@ public class GlobalResourcesLifecycleListener implements LifecycleListener {
         if (Lifecycle.START_EVENT.equals(event.getType())) {
             if (!(event.getLifecycle() instanceof Server)) {
                 log.warn(sm.getString("listener.notServer",
-                        event.getLifecycle().getClass().getSimpleName()));
+                    event.getLifecycle().getClass().getSimpleName()));
             }
             component = event.getLifecycle();
             createMBeans();
@@ -115,10 +116,9 @@ public class GlobalResourcesLifecycleListener implements LifecycleListener {
      * Create the MBeans for the interesting global JNDI resources in
      * the specified naming context.
      *
-     * @param prefix Prefix for complete object name paths
+     * @param prefix  Prefix for complete object name paths
      * @param context Context to be scanned
-     *
-     * @exception NamingException if a JNDI exception occurs
+     * @throws NamingException if a JNDI exception occurs
      */
     protected void createMBeans(String prefix, Context context) throws NamingException {
 
@@ -157,10 +157,9 @@ public class GlobalResourcesLifecycleListener implements LifecycleListener {
     /**
      * Create the MBeans for the specified UserDatabase and its contents.
      *
-     * @param name Complete resource name of this UserDatabase
+     * @param name     Complete resource name of this UserDatabase
      * @param database The UserDatabase to be processed
-     *
-     * @exception Exception if an exception occurs while creating MBeans
+     * @throws Exception if an exception occurs while creating MBeans
      */
     protected void createMBeans(String name, UserDatabase database) throws Exception {
 
@@ -171,7 +170,7 @@ public class GlobalResourcesLifecycleListener implements LifecycleListener {
         }
         try {
             MBeanUtils.createMBean(database);
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new IllegalArgumentException(sm.getString("globalResources.createError.userDatabase", name), e);
         }
 

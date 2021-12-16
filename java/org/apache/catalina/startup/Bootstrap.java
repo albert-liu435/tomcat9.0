@@ -151,7 +151,9 @@ public final class Bootstrap {
                 // no config file, default to this loader - we might be in a 'single' env.
                 commonLoader = this.getClass().getClassLoader();
             }
+            //以Common为父加载器，用于加载Tomcat引用服务器的类加载器，其路径为server.loader，默认为空。此时Tomcat使用Common类加载器加载应用服务器
             catalinaLoader = createClassLoader("server", commonLoader);
+            //以Common为父加载器,是所有Web应用的父加载器，器路径为shared.loader,默认为空，此时Tomcat使用Common类加载器作为Web应用的赋予加载器
             sharedLoader = createClassLoader("shared", commonLoader);
         } catch (Throwable t) {
             handleThrowable(t);

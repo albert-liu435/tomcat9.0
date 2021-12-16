@@ -20,6 +20,8 @@ import org.apache.tomcat.util.IntrospectionUtils;
 
 
 /**
+ * 当end()方法调用时,Digester会找到栈顶部对象之后的对象调用指定的方法，同时将栈顶部对象作为参数传入，用于设置父对象的子对象，以在栈对象之间建立父子管线
+ * 从而形成对象树
  * <p>Rule implementation that calls a method on the (top-1) (parent)
  * object, passing the top object (child) as an argument.  It is
  * commonly used to establish parent-child relationships.</p>
@@ -38,10 +40,10 @@ public class SetNextRule extends Rule {
      * Construct a "set next" rule with the specified method name.
      *
      * @param methodName Method name of the parent method to call
-     * @param paramType Java class of the parent method's argument
-     *  (if you wish to use a primitive type, specify the corresponding
-     *  Java wrapper class instead, such as <code>java.lang.Boolean</code>
-     *  for a <code>boolean</code> parameter)
+     * @param paramType  Java class of the parent method's argument
+     *                   (if you wish to use a primitive type, specify the corresponding
+     *                   Java wrapper class instead, such as <code>java.lang.Boolean</code>
+     *                   for a <code>boolean</code> parameter)
      */
     public SetNextRule(String methodName,
                        String paramType) {
@@ -116,10 +118,10 @@ public class SetNextRule extends Rule {
      * Process the end of this element.
      *
      * @param namespace the namespace URI of the matching element, or an
-     *   empty string if the parser is not namespace aware or the element has
-     *   no namespace
-     * @param name the local name if the parser is namespace aware, or just
-     *   the element name otherwise
+     *                  empty string if the parser is not namespace aware or the element has
+     *                  no namespace
+     * @param name      the local name if the parser is namespace aware, or just
+     *                  the element name otherwise
      */
     @Override
     public void end(String namespace, String name) throws Exception {
@@ -130,18 +132,18 @@ public class SetNextRule extends Rule {
         if (digester.log.isDebugEnabled()) {
             if (parent == null) {
                 digester.log.debug("[SetNextRule]{" + digester.match +
-                        "} Call [NULL PARENT]." +
-                        methodName + "(" + child + ")");
+                    "} Call [NULL PARENT]." +
+                    methodName + "(" + child + ")");
             } else {
                 digester.log.debug("[SetNextRule]{" + digester.match +
-                        "} Call " + parent.getClass().getName() + "." +
-                        methodName + "(" + child + ")");
+                    "} Call " + parent.getClass().getName() + "." +
+                    methodName + "(" + child + ")");
             }
         }
 
         // Call the specified method
         IntrospectionUtils.callMethod1(parent, methodName,
-                child, paramType, digester.getClassLoader());
+            child, paramType, digester.getClassLoader());
 
         StringBuilder code = digester.getGeneratedCode();
         if (code != null) {

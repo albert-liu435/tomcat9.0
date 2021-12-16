@@ -34,6 +34,7 @@ import org.apache.tomcat.util.res.StringManager;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 
 /**
+ * 用于在Context停止时重建Executor池中的线程，避免导致内存泄露
  * A {@link LifecycleListener} that triggers the renewal of threads in Executor
  * pools when a {@link Context} is being stopped to avoid thread-local related
  * memory leaks.
@@ -67,14 +68,14 @@ public class ThreadLocalLeakPreventionListener extends FrameworkListener {
 
             Lifecycle lifecycle = event.getLifecycle();
             if (Lifecycle.BEFORE_STOP_EVENT.equals(event.getType()) &&
-                    lifecycle instanceof Server) {
+                lifecycle instanceof Server) {
                 // Server is shutting down, so thread pools will be shut down so
                 // there is no need to clean the threads
                 serverStopping = true;
             }
 
             if (Lifecycle.AFTER_STOP_EVENT.equals(event.getType()) &&
-                    lifecycle instanceof Context) {
+                lifecycle instanceof Context) {
                 stopIdleThreads((Context) lifecycle);
             }
         } catch (Exception e) {
@@ -104,9 +105,8 @@ public class ThreadLocalLeakPreventionListener extends FrameworkListener {
      * Updates each ThreadPoolExecutor with the current time, which is the time
      * when a context is being stopped.
      *
-     * @param context
-     *            the context being stopped, used to discover all the Connectors
-     *            of its parent Service.
+     * @param context the context being stopped, used to discover all the Connectors
+     *                of its parent Service.
      */
     private void stopIdleThreads(Context context) {
         if (serverStopping) {
