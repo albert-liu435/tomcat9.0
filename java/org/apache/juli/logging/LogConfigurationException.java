@@ -18,6 +18,7 @@ package org.apache.juli.logging;
 
 
 /**
+ * 当LogFactory和Log
  * <p>An exception that is thrown only if a suitable <code>LogFactory</code>
  * or <code>Log</code> instance cannot be created by the corresponding
  * factory methods.</p>

@@ -20,6 +20,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
+ * 每个包下都有常量文件Constants.java，其中定义常量Package为该文件DefaultServlet所在包名
  * Constants.
  *
  * @author Remy Maucherat

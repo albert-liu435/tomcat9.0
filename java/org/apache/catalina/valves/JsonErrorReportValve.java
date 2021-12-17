@@ -27,11 +27,11 @@ import org.apache.tomcat.util.ExceptionUtils;
 import org.apache.tomcat.util.res.StringManager;
 
 /**
+ * 输出json错误的信息
  * <p>Implementation of a Valve that outputs error jsons.</p>
  *
  * <p>This Valve should be attached at the Host level, although it will work
  * if attached to a Context.</p>
- *
  */
 public class JsonErrorReportValve extends ErrorReportValve {
 
@@ -82,10 +82,10 @@ public class JsonErrorReportValve extends ErrorReportValve {
             }
         }
         String jsonReport = "{\n" +
-                            "  \"type\": \"" + type + "\",\n" +
-                            "  \"message\": \"" + message + "\",\n" +
-                            "  \"description\": \"" + description + "\"\n" +
-                            "}";
+            "  \"type\": \"" + type + "\",\n" +
+            "  \"message\": \"" + message + "\",\n" +
+            "  \"description\": \"" + description + "\"\n" +
+            "}";
         try {
             try {
                 response.setContentType("application/json");

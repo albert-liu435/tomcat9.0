@@ -19,6 +19,9 @@ package javax.servlet;
 import java.io.IOException;
 
 /**
+ * 定义了所有的Servlets必须实现的方法
+ * <p>
+ * init()、service()和destroy()方法都是与servlet生命周期相关的方法
  * Defines methods that all servlets must implement.
  *
  * <p>
@@ -56,6 +59,7 @@ import java.io.IOException;
 public interface Servlet {
 
     /**
+     * servlet实例化后会调用该方法，servlet容器之后调用该方法一次
      * Called by the servlet container to indicate to a servlet that the servlet
      * is being placed into service.
      *
@@ -72,22 +76,16 @@ public interface Servlet {
      * <li>Does not return within a time period defined by the Web server
      * </ol>
      *
-     *
-     * @param config
-     *            a <code>ServletConfig</code> object containing the servlet's
-     *            configuration and initialization parameters
-     *
-     * @exception ServletException
-     *                if an exception has occurred that interferes with the
-     *                servlet's normal operation
-     *
+     * @param config a <code>ServletConfig</code> object containing the servlet's
+     *               configuration and initialization parameters
+     * @throws ServletException if an exception has occurred that interferes with the
+     *                          servlet's normal operation
      * @see UnavailableException
      * @see #getServletConfig
      */
     public void init(ServletConfig config) throws ServletException;
 
     /**
-     *
      * Returns a {@link ServletConfig} object, which contains initialization and
      * startup parameters for this servlet. The <code>ServletConfig</code>
      * object returned is the one passed to the <code>init</code> method.
@@ -99,13 +97,13 @@ public interface Servlet {
      * does this.
      *
      * @return the <code>ServletConfig</code> object that initializes this
-     *         servlet
-     *
+     * servlet
      * @see #init
      */
     public ServletConfig getServletConfig();
 
     /**
+     * Servlet的一个客户端请求到达后会调用该方法，service()方法可以被调用多次
      * Called by the servlet container to allow the servlet to respond to a
      * request.
      *
@@ -128,24 +126,16 @@ public interface Servlet {
      * ="http://java.sun.com/Series/Tutorial/java/threads/multithreaded.html">
      * the Java tutorial on multi-threaded programming</a>.
      *
-     *
-     * @param req
-     *            the <code>ServletRequest</code> object that contains the
+     * @param req the <code>ServletRequest</code> object that contains the
      *            client's request
-     *
-     * @param res
-     *            the <code>ServletResponse</code> object that contains the
+     * @param res the <code>ServletResponse</code> object that contains the
      *            servlet's response
-     *
-     * @exception ServletException
-     *                if an exception occurs that interferes with the servlet's
-     *                normal operation
-     *
-     * @exception IOException
-     *                if an input or output exception occurs
+     * @throws ServletException if an exception occurs that interferes with the servlet's
+     *                          normal operation
+     * @throws IOException      if an input or output exception occurs
      */
     public void service(ServletRequest req, ServletResponse res)
-            throws ServletException, IOException;
+        throws ServletException, IOException;
 
     /**
      * Returns information about the servlet, such as author, version, and
@@ -160,6 +150,8 @@ public interface Servlet {
     public String getServletInfo();
 
     /**
+     * 将servlet实例从服务中移除前，会调用该方法，一般当servlet容器关闭或servlet容器要释放内存时，才会将servlet实例移除
+     * 而且只有当servlet实例的service()方法中的所有线程都退出或执行超时时，才会调用destroy()方法
      * Called by the servlet container to indicate to a servlet that the servlet
      * is being taken out of service. This method is only called once all
      * threads within the servlet's <code>service</code> method have exited or

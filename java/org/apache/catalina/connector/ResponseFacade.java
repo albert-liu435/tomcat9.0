@@ -36,6 +36,7 @@ import org.apache.catalina.security.SecurityUtil;
 import org.apache.tomcat.util.res.StringManager;
 
 /**
+ * Response的门面类
  * Facade class that wraps a Coyote response object.
  * All methods are delegated to the wrapped response.
  *
@@ -47,11 +48,11 @@ public class ResponseFacade implements HttpServletResponse {
     // ----------------------------------------------------------- DoPrivileged
 
     private final class SetContentTypePrivilegedAction
-            implements PrivilegedAction<Void> {
+        implements PrivilegedAction<Void> {
 
         private final String contentType;
 
-        public SetContentTypePrivilegedAction(String contentType){
+        public SetContentTypePrivilegedAction(String contentType) {
             this.contentType = contentType;
         }
 
@@ -63,7 +64,7 @@ public class ResponseFacade implements HttpServletResponse {
     }
 
     private final class DateHeaderPrivilegedAction
-            implements PrivilegedAction<Void> {
+        implements PrivilegedAction<Void> {
 
         private final String name;
         private final long value;
@@ -77,7 +78,7 @@ public class ResponseFacade implements HttpServletResponse {
 
         @Override
         public Void run() {
-            if(add) {
+            if (add) {
                 response.addDateHeader(name, value);
             } else {
                 response.setDateHeader(name, value);
@@ -112,7 +113,7 @@ public class ResponseFacade implements HttpServletResponse {
      */
     public ResponseFacade(Response response) {
 
-         this.response = response;
+        this.response = response;
     }
 
 
@@ -156,7 +157,7 @@ public class ResponseFacade implements HttpServletResponse {
 
         if (response == null) {
             throw new IllegalStateException(
-                            sm.getString("responseFacade.nullResponse"));
+                sm.getString("responseFacade.nullResponse"));
         }
 
         response.setSuspended(true);
@@ -167,7 +168,7 @@ public class ResponseFacade implements HttpServletResponse {
 
         if (response == null) {
             throw new IllegalStateException(
-                            sm.getString("responseFacade.nullResponse"));
+                sm.getString("responseFacade.nullResponse"));
         }
 
         return response.isSuspended();
@@ -178,7 +179,7 @@ public class ResponseFacade implements HttpServletResponse {
 
         if (response == null) {
             throw new IllegalStateException(
-                            sm.getString("responseFacade.nullResponse"));
+                sm.getString("responseFacade.nullResponse"));
         }
 
         return response.getContentWritten();
@@ -192,7 +193,7 @@ public class ResponseFacade implements HttpServletResponse {
 
         if (response == null) {
             throw new IllegalStateException(
-                            sm.getString("responseFacade.nullResponse"));
+                sm.getString("responseFacade.nullResponse"));
         }
 
         return response.getCharacterEncoding();
@@ -258,7 +259,7 @@ public class ResponseFacade implements HttpServletResponse {
             return;
         }
 
-        if (SecurityUtil.isPackageProtectionEnabled()){
+        if (SecurityUtil.isPackageProtectionEnabled()) {
             AccessController.doPrivileged(new SetContentTypePrivilegedAction(type));
         } else {
             response.setContentType(type);
@@ -284,7 +285,7 @@ public class ResponseFacade implements HttpServletResponse {
 
         if (response == null) {
             throw new IllegalStateException(
-                            sm.getString("responseFacade.nullResponse"));
+                sm.getString("responseFacade.nullResponse"));
         }
 
         return response.getBufferSize();
@@ -299,12 +300,12 @@ public class ResponseFacade implements HttpServletResponse {
         }
 
         if (SecurityUtil.isPackageProtectionEnabled()) {
-            try{
+            try {
                 AccessController.doPrivileged(new FlushBufferPrivilegedAction(response));
-            } catch(PrivilegedActionException e) {
+            } catch (PrivilegedActionException e) {
                 Exception ex = e.getException();
                 if (ex instanceof IOException) {
-                    throw (IOException)ex;
+                    throw (IOException) ex;
                 }
             }
         } else {
@@ -332,7 +333,7 @@ public class ResponseFacade implements HttpServletResponse {
 
         if (response == null) {
             throw new IllegalStateException(
-                            sm.getString("responseFacade.nullResponse"));
+                sm.getString("responseFacade.nullResponse"));
         }
 
         return response.isAppCommitted();
@@ -368,7 +369,7 @@ public class ResponseFacade implements HttpServletResponse {
 
         if (response == null) {
             throw new IllegalStateException(
-                            sm.getString("responseFacade.nullResponse"));
+                sm.getString("responseFacade.nullResponse"));
         }
 
         return response.getLocale();
@@ -392,7 +393,7 @@ public class ResponseFacade implements HttpServletResponse {
 
         if (response == null) {
             throw new IllegalStateException(
-                            sm.getString("responseFacade.nullResponse"));
+                sm.getString("responseFacade.nullResponse"));
         }
 
         return response.containsHeader(name);
@@ -404,7 +405,7 @@ public class ResponseFacade implements HttpServletResponse {
 
         if (response == null) {
             throw new IllegalStateException(
-                            sm.getString("responseFacade.nullResponse"));
+                sm.getString("responseFacade.nullResponse"));
         }
 
         return response.encodeURL(url);
@@ -416,7 +417,7 @@ public class ResponseFacade implements HttpServletResponse {
 
         if (response == null) {
             throw new IllegalStateException(
-                            sm.getString("responseFacade.nullResponse"));
+                sm.getString("responseFacade.nullResponse"));
         }
 
         return response.encodeRedirectURL(url);
@@ -428,7 +429,7 @@ public class ResponseFacade implements HttpServletResponse {
 
         if (response == null) {
             throw new IllegalStateException(
-                            sm.getString("responseFacade.nullResponse"));
+                sm.getString("responseFacade.nullResponse"));
         }
 
         return response.encodeURL(url);
@@ -440,7 +441,7 @@ public class ResponseFacade implements HttpServletResponse {
 
         if (response == null) {
             throw new IllegalStateException(
-                            sm.getString("responseFacade.nullResponse"));
+                sm.getString("responseFacade.nullResponse"));
         }
 
         return response.encodeRedirectURL(url);
@@ -502,9 +503,9 @@ public class ResponseFacade implements HttpServletResponse {
             return;
         }
 
-        if(Globals.IS_SECURITY_ENABLED) {
+        if (Globals.IS_SECURITY_ENABLED) {
             AccessController.doPrivileged(new DateHeaderPrivilegedAction
-                                             (name, date, false));
+                (name, date, false));
         } else {
             response.setDateHeader(name, date);
         }
@@ -519,9 +520,9 @@ public class ResponseFacade implements HttpServletResponse {
             return;
         }
 
-        if(Globals.IS_SECURITY_ENABLED) {
+        if (Globals.IS_SECURITY_ENABLED) {
             AccessController.doPrivileged(new DateHeaderPrivilegedAction
-                                             (name, date, true));
+                (name, date, true));
         } else {
             response.addDateHeader(name, date);
         }
@@ -605,7 +606,7 @@ public class ResponseFacade implements HttpServletResponse {
 
         if (response == null) {
             throw new IllegalStateException(
-                            sm.getString("responseFacade.nullResponse"));
+                sm.getString("responseFacade.nullResponse"));
         }
 
         return response.getContentType();
@@ -617,7 +618,7 @@ public class ResponseFacade implements HttpServletResponse {
 
         if (response == null) {
             throw new IllegalStateException(
-                            sm.getString("responseFacade.nullResponse"));
+                sm.getString("responseFacade.nullResponse"));
         }
 
         response.setCharacterEncoding(arg0);

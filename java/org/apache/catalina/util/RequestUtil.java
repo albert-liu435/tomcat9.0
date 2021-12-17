@@ -19,6 +19,7 @@ package org.apache.catalina.util;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * 通用请求解析和编码实用程序方法
  * General purpose request parsing and encoding utility methods.
  *
  * @author Craig R. McClanahan
@@ -27,18 +28,20 @@ import javax.servlet.http.HttpServletRequest;
 public final class RequestUtil {
 
     /**
+     * 构建返回值
      * Build an appropriate return value for
      * {@link HttpServletRequest#getRequestURL()} based on the provided
      * request object. Note that this will also work for instances of
      * {@link javax.servlet.http.HttpServletRequestWrapper}.
      *
      * @param request The request object for which the URL should be built
-     *
      * @return The request URL for the given request object
      */
     public static StringBuffer getRequestURL(HttpServletRequest request) {
         StringBuffer url = new StringBuffer();
+        //获取secheme 如http
         String scheme = request.getScheme();
+        //获取端口
         int port = request.getServerPort();
         if (port < 0) {
             // Work around java.net.URL bug
@@ -53,6 +56,7 @@ public final class RequestUtil {
             url.append(':');
             url.append(port);
         }
+        //获取uri
         url.append(request.getRequestURI());
 
         return url;

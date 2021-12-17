@@ -51,7 +51,7 @@ import org.apache.tomcat.util.res.StringManager;
 
 /**
  * Connector主要负责开启Socket并监听客户端请求、返回响应数据
- *
+ * <p>
  * 将读取的
  *
  * <p>
@@ -87,6 +87,7 @@ public class Connector extends LifecycleMBeanBase {
     // ------------------------------------------------------------ Constructor
 
     /**
+     * 默认为HTTP/1.1
      * Defaults to using HTTP/1.1 NIO implementation.
      */
     public Connector() {
@@ -262,6 +263,7 @@ public class Connector extends LifecycleMBeanBase {
 
 
     /**
+     * 协议处理器
      * Coyote protocol handler.
      */
     protected final ProtocolHandler protocolHandler;

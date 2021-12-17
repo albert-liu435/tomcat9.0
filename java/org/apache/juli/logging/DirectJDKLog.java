@@ -22,7 +22,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
+/**硬编码格式的logger
  * Hard-coded java.util.logging commons-logging implementation.
  */
 class DirectJDKLog implements Log {

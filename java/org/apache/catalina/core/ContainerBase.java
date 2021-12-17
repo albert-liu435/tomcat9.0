@@ -219,7 +219,7 @@ public abstract class ContainerBase extends LifecycleMBeanBase implements Contai
     protected ClassLoader parentClassLoader = null;
 
 
-    /**
+    /**与此容器关联的管道对象
      * The Pipeline object with which this Container is associated.
      */
     protected final Pipeline pipeline = new StandardPipeline(this);
@@ -318,7 +318,7 @@ public abstract class ContainerBase extends LifecycleMBeanBase implements Contai
     }
 
 
-    /**
+    /**返回该组件的日志
      * Return the Logger for this Container.
      */
     @Override
@@ -331,7 +331,7 @@ public abstract class ContainerBase extends LifecycleMBeanBase implements Contai
     }
 
 
-    /**
+    /**返回日志名称如：org.apache.catalina.core.ContainerBase.[Catalina].[localhost]
      * @return the abbreviated name of this container for logging messages
      */
     @Override
@@ -384,7 +384,7 @@ public abstract class ContainerBase extends LifecycleMBeanBase implements Contai
     }
 
 
-    /*
+    /*仅提供对连接到此容器的群集组件的访问
      * Provide access to just the cluster component attached to this container.
      */
     protected Cluster getClusterInternal() {
@@ -890,7 +890,7 @@ public abstract class ContainerBase extends LifecycleMBeanBase implements Contai
     }
 
 
-    /**
+    /**启动相关组件
      * Start this component and implement the requirements
      * of {@link org.apache.catalina.util.LifecycleBase#startInternal()}.
      *
@@ -937,7 +937,7 @@ public abstract class ContainerBase extends LifecycleMBeanBase implements Contai
             throw new LifecycleException(sm.getString("containerBase.threadedStartFailed"),
                     multiThrowable.getThrowable());
         }
-
+        //启动Host持有的Pipeline组件
         // Start the Valves in our pipeline (including the basic), if any
         if (pipeline instanceof Lifecycle) {
             ((Lifecycle) pipeline).start();

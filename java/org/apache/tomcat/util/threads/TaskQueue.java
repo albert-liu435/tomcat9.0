@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.tomcat.util.res.StringManager;
 
 /**
+ * 任务队列
  * As task queue specifically designed to run with a thread pool executor. The
  * task queue is optimised to properly utilize threads within a thread pool
  * executor. If you use a normal queue, the executor will spawn threads when
@@ -62,10 +63,9 @@ public class TaskQueue extends LinkedBlockingQueue<Runnable> {
     /**
      * Used to add a task to the queue if the task has been rejected by the Executor.
      *
-     * @param o         The task to add to the queue
-     *
-     * @return          {@code true} if the task was added to the queue,
-     *                      otherwise {@code false}
+     * @param o The task to add to the queue
+     * @return {@code true} if the task was added to the queue,
+     * otherwise {@code false}
      */
     public boolean force(Runnable o) {
         if (parent == null || parent.isShutdown()) {
@@ -78,16 +78,13 @@ public class TaskQueue extends LinkedBlockingQueue<Runnable> {
     /**
      * Used to add a task to the queue if the task has been rejected by the Executor.
      *
-     * @param o         The task to add to the queue
-     * @param timeout   The timeout to use when adding the task
-     * @param unit      The units in which the timeout is expressed
-     *
-     * @return          {@code true} if the task was added to the queue,
-     *                      otherwise {@code false}
-     *
+     * @param o       The task to add to the queue
+     * @param timeout The timeout to use when adding the task
+     * @param unit    The units in which the timeout is expressed
+     * @return {@code true} if the task was added to the queue,
+     * otherwise {@code false}
      * @throws InterruptedException If the call is interrupted before the
      *                              timeout expires
-     *
      * @deprecated Unused. Will be removed in Tomcat 10.1.x.
      */
     @Deprecated
@@ -95,14 +92,14 @@ public class TaskQueue extends LinkedBlockingQueue<Runnable> {
         if (parent == null || parent.isShutdown()) {
             throw new RejectedExecutionException(sm.getString("taskQueue.notRunning"));
         }
-        return super.offer(o,timeout,unit); //forces the item onto the queue, to be used if the task is rejected
+        return super.offer(o, timeout, unit); //forces the item onto the queue, to be used if the task is rejected
     }
 
 
     @Override
     public boolean offer(Runnable o) {
-      //we can't do any checks
-        if (parent==null) {
+        //we can't do any checks
+        if (parent == null) {
             return super.offer(o);
         }
         //we are maxed out on threads, simply queue the object
@@ -110,11 +107,11 @@ public class TaskQueue extends LinkedBlockingQueue<Runnable> {
             return super.offer(o);
         }
         //we have idle threads, just add it to the queue
-        if (parent.getSubmittedCount()<=(parent.getPoolSize())) {
+        if (parent.getSubmittedCount() <= (parent.getPoolSize())) {
             return super.offer(o);
         }
         //if we have less threads than maximum force creation of a new thread
-        if (parent.getPoolSize()<parent.getMaximumPoolSize()) {
+        if (parent.getPoolSize() < parent.getMaximumPoolSize()) {
             return false;
         }
         //if we reached here, we need to add it to the queue
@@ -124,7 +121,7 @@ public class TaskQueue extends LinkedBlockingQueue<Runnable> {
 
     @Override
     public Runnable poll(long timeout, TimeUnit unit)
-            throws InterruptedException {
+        throws InterruptedException {
         Runnable runnable = super.poll(timeout, unit);
         if (runnable == null && parent != null) {
             // the poll timed out, it gives an opportunity to stop the current
@@ -138,7 +135,7 @@ public class TaskQueue extends LinkedBlockingQueue<Runnable> {
     public Runnable take() throws InterruptedException {
         if (parent != null && parent.currentThreadShouldBeStopped()) {
             return poll(parent.getKeepAliveTime(TimeUnit.MILLISECONDS),
-                    TimeUnit.MILLISECONDS);
+                TimeUnit.MILLISECONDS);
             // yes, this may return null (in case of timeout) which normally
             // does not occur with take()
             // but the ThreadPoolExecutor implementation allows this

@@ -30,7 +30,7 @@ import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.res.StringManager;
 
 public abstract class SessionIdGeneratorBase extends LifecycleBase
-        implements SessionIdGenerator {
+    implements SessionIdGenerator {
 
     private final Log log = LogFactory.getLog(SessionIdGeneratorBase.class); // must not be static
 
@@ -55,11 +55,15 @@ public abstract class SessionIdGeneratorBase extends LifecycleBase
     private String secureRandomProvider = null;
 
 
-    /** Node identifier when in a cluster. Defaults to the empty string. */
+    /**
+     * Node identifier when in a cluster. Defaults to the empty string.
+     */
     private String jvmRoute = "";
 
 
-    /** Number of bytes in a session ID. Defaults to 16. */
+    /**
+     * Number of bytes in a session ID. Defaults to 16.
+     */
     private int sessionIdLength = 16;
 
 
@@ -68,7 +72,7 @@ public abstract class SessionIdGeneratorBase extends LifecycleBase
      * generate session IDs.
      *
      * @return The fully qualified class name. {@code null} indicates that the
-     *         JRE provided {@link SecureRandom} implementation will be used
+     * JRE provided {@link SecureRandom} implementation will be used
      */
     public String getSecureRandomClass() {
         return secureRandomClass;
@@ -92,7 +96,7 @@ public abstract class SessionIdGeneratorBase extends LifecycleBase
      * instances which generate new session IDs.
      *
      * @return The name of the algorithm. {@code null} or the empty string means
-     *         that platform default will be used
+     * that platform default will be used
      */
     public String getSecureRandomAlgorithm() {
         return secureRandomAlgorithm;
@@ -121,7 +125,7 @@ public abstract class SessionIdGeneratorBase extends LifecycleBase
      * instances which generate new session IDs.
      *
      * @return The name of the provider. {@code null} or the empty string means
-     *         that platform default will be used
+     * that platform default will be used
      */
     public String getSecureRandomProvider() {
         return secureRandomProvider;
@@ -138,7 +142,7 @@ public abstract class SessionIdGeneratorBase extends LifecycleBase
      * implementation. If that fails, the {@link SecureRandom} instances will be
      * created using platform defaults.
      *
-     * @param secureRandomProvider  The name of the provider
+     * @param secureRandomProvider The name of the provider
      */
     public void setSecureRandomProvider(String secureRandomProvider) {
         this.secureRandomProvider = secureRandomProvider;
@@ -159,7 +163,7 @@ public abstract class SessionIdGeneratorBase extends LifecycleBase
      * Specify the node identifier associated with this node which will be
      * included in the generated session ID.
      *
-     * @param jvmRoute  The node identifier
+     * @param jvmRoute The node identifier
      */
     @Override
     public void setJvmRoute(String jvmRoute) {
@@ -179,7 +183,7 @@ public abstract class SessionIdGeneratorBase extends LifecycleBase
     /**
      * Specify the number of bytes for a session ID
      *
-     * @param sessionIdLength   Number of bytes
+     * @param sessionIdLength Number of bytes
      */
     @Override
     public void setSessionIdLength(int sessionIdLength) {
@@ -223,7 +227,7 @@ public abstract class SessionIdGeneratorBase extends LifecycleBase
                 result = (SecureRandom) clazz.getConstructor().newInstance();
             } catch (Exception e) {
                 log.error(sm.getString("sessionIdGeneratorBase.random",
-                        secureRandomClass), e);
+                    secureRandomClass), e);
             }
         }
 
@@ -232,21 +236,21 @@ public abstract class SessionIdGeneratorBase extends LifecycleBase
             // No secureRandomClass or creation failed. Use SecureRandom.
             try {
                 if (secureRandomProvider != null &&
-                        secureRandomProvider.length() > 0) {
+                    secureRandomProvider.length() > 0) {
                     result = SecureRandom.getInstance(secureRandomAlgorithm,
-                            secureRandomProvider);
+                        secureRandomProvider);
                 } else if (secureRandomAlgorithm != null &&
-                        secureRandomAlgorithm.length() > 0) {
+                    secureRandomAlgorithm.length() > 0) {
                     result = SecureRandom.getInstance(secureRandomAlgorithm);
                 }
             } catch (NoSuchAlgorithmException e) {
                 error = true;
                 log.error(sm.getString("sessionIdGeneratorBase.randomAlgorithm",
-                        secureRandomAlgorithm), e);
+                    secureRandomAlgorithm), e);
             } catch (NoSuchProviderException e) {
                 error = true;
                 log.error(sm.getString("sessionIdGeneratorBase.randomProvider",
-                        secureRandomProvider), e);
+                    secureRandomProvider), e);
             }
         }
 
@@ -256,7 +260,7 @@ public abstract class SessionIdGeneratorBase extends LifecycleBase
                 result = SecureRandom.getInstance("SHA1PRNG");
             } catch (NoSuchAlgorithmException e) {
                 log.error(sm.getString("sessionIdGeneratorBase.randomAlgorithm",
-                        secureRandomAlgorithm), e);
+                    secureRandomAlgorithm), e);
             }
         }
 
@@ -271,7 +275,7 @@ public abstract class SessionIdGeneratorBase extends LifecycleBase
         long t2 = System.currentTimeMillis();
         if ((t2 - t1) > 100) {
             log.warn(sm.getString("sessionIdGeneratorBase.createRandom",
-                    result.getAlgorithm(), Long.valueOf(t2 - t1)));
+                result.getAlgorithm(), Long.valueOf(t2 - t1)));
         }
         return result;
     }

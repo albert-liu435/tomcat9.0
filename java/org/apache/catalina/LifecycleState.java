@@ -17,6 +17,7 @@
 package org.apache.catalina;
 
 /**
+ * 声明周期状态枚举类
  * The list of valid states for components that implement {@link Lifecycle}.
  * See {@link Lifecycle} for the state transition diagram.
  */
@@ -53,7 +54,7 @@ public enum LifecycleState {
      * </ul>
      *
      * @return <code>true</code> if the component is available for use,
-     *         otherwise <code>false</code>
+     * otherwise <code>false</code>
      */
     public boolean isAvailable() {
         return available;

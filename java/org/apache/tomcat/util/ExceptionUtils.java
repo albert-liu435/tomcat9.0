@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 
 
 /**
+ * 用于处理异常的工具类
  * Utilities for handling Throwables and Exceptions.
  */
 public class ExceptionUtils {
@@ -27,6 +28,7 @@ public class ExceptionUtils {
     /**
      * Checks whether the supplied Throwable is one that needs to be
      * rethrown and swallows all others.
+     *
      * @param t the Throwable to check
      */
     public static void handleThrowable(Throwable t) {

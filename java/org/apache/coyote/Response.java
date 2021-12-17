@@ -38,6 +38,7 @@ import org.apache.tomcat.util.http.parser.MediaType;
 import org.apache.tomcat.util.res.StringManager;
 
 /**
+ * 响应对象
  * Response object.
  *
  * @author James Duncan Davidson [duncan@eng.sun.com]
@@ -81,7 +82,7 @@ public final class Response {
     final MimeHeaders headers = new MimeHeaders();
 
 
-    private Supplier<Map<String,String>> trailerFieldsSupplier = null;
+    private Supplier<Map<String, String>> trailerFieldsSupplier = null;
 
     /**
      * Associated output buffer.
@@ -169,8 +170,8 @@ public final class Response {
         return req;
     }
 
-    public void setRequest( Request req ) {
-        this.req=req;
+    public void setRequest(Request req) {
+        this.req = req;
     }
 
 
@@ -343,6 +344,7 @@ public final class Response {
 
 
     // -------------------- Headers --------------------
+
     /**
      * Does the response contain the given header.
      * <br>
@@ -350,7 +352,6 @@ public final class Response {
      * and Content-Length.
      *
      * @param name The name of the header of interest
-     *
      * @return {@code true} if the response contains the header.
      */
     public boolean containsHeader(String name) {
@@ -359,13 +360,13 @@ public final class Response {
 
 
     public void setHeader(String name, String value) {
-        char cc=name.charAt(0);
-        if( cc=='C' || cc=='c' ) {
-            if( checkSpecialHeader(name, value) ) {
+        char cc = name.charAt(0);
+        if (cc == 'C' || cc == 'c') {
+            if (checkSpecialHeader(name, value)) {
                 return;
             }
         }
-        headers.setValue(name).setString( value);
+        headers.setValue(name).setString(value);
     }
 
 
@@ -375,9 +376,9 @@ public final class Response {
 
 
     public void addHeader(String name, String value, Charset charset) {
-        char cc=name.charAt(0);
-        if( cc=='C' || cc=='c' ) {
-            if( checkSpecialHeader(name, value) ) {
+        char cc = name.charAt(0);
+        if (cc == 'C' || cc == 'c') {
+            if (checkSpecialHeader(name, value)) {
                 return;
             }
         }
@@ -410,19 +411,19 @@ public final class Response {
      * Called from set/addHeader.
      * Return true if the header is special, no need to set the header.
      */
-    private boolean checkSpecialHeader( String name, String value) {
+    private boolean checkSpecialHeader(String name, String value) {
         // XXX Eliminate redundant fields !!!
         // ( both header and in special fields )
-        if( name.equalsIgnoreCase( "Content-Type" ) ) {
-            setContentType( value );
+        if (name.equalsIgnoreCase("Content-Type")) {
+            setContentType(value);
             return true;
         }
-        if( name.equalsIgnoreCase( "Content-Length" ) ) {
+        if (name.equalsIgnoreCase("Content-Length")) {
             try {
-                long cL=Long.parseLong( value );
-                setContentLength( cL );
+                long cL = Long.parseLong(value);
+                setContentLength(cL);
                 return true;
-            } catch( NumberFormatException ex ) {
+            } catch (NumberFormatException ex) {
                 // Do nothing - the spec doesn't have any "throws"
                 // and the user might know what they're doing
                 return false;
@@ -432,9 +433,10 @@ public final class Response {
     }
 
 
-    /** Signal that we're done with the headers, and body will follow.
-     *  Any implementation needs to notify ContextManager, to allow
-     *  interceptors to fix headers.
+    /**
+     * Signal that we're done with the headers, and body will follow.
+     * Any implementation needs to notify ContextManager, to allow
+     * interceptors to fix headers.
      */
     public void sendHeaders() {
         action(ActionCode.COMMIT, this);
@@ -474,7 +476,7 @@ public final class Response {
      * Return the content language.
      *
      * @return The language code for the language currently associated with this
-     *         response
+     * response
      */
     public String getContentLanguage() {
         return contentLanguage;
@@ -486,9 +488,8 @@ public final class Response {
      * method must be called prior to writing output using getWriter().
      *
      * @param characterEncoding The name of character encoding.
-     *
      * @throws UnsupportedEncodingException If the specified name is not
-     *         recognised
+     *                                      recognised
      */
     public void setCharacterEncoding(String characterEncoding) throws UnsupportedEncodingException {
         if (isCommitted()) {
@@ -520,7 +521,7 @@ public final class Response {
 
     /**
      * Sets the content type.
-     *
+     * <p>
      * This method must preserve any response charset that may already have
      * been set via a call to response.setContentType(), response.setLocale(),
      * or response.setCharacterEncoding().
@@ -536,7 +537,7 @@ public final class Response {
 
         MediaType m = null;
         try {
-             m = MediaType.parseMediaType(new StringReader(type));
+            m = MediaType.parseMediaType(new StringReader(type));
         } catch (IOException e) {
             // Ignore - null test below handles this
         }
@@ -607,7 +608,6 @@ public final class Response {
      * Write a chunk of bytes.
      *
      * @param chunk The ByteBuffer to write
-     *
      * @throws IOException If an I/O error occurs during the write
      */
     public void doWrite(ByteBuffer chunk) throws IOException {
@@ -642,15 +642,15 @@ public final class Response {
         }
 
         // update counters
-        contentWritten=0;
+        contentWritten = 0;
     }
 
     /**
      * Bytes written by application - i.e. before compression, chunking, etc.
      *
      * @return The total number of bytes written to the response by the
-     *         application. This will not be the number of bytes written to the
-     *         network which may be more or less than this value.
+     * application. This will not be the number of bytes written to the
+     * network which may be more or less than this value.
      */
     public long getContentWritten() {
         return contentWritten;
@@ -662,7 +662,6 @@ public final class Response {
      * @param flush Should any remaining bytes be flushed before returning the
      *              total? If {@code false} bytes remaining in the buffer will
      *              not be included in the returned value
-     *
      * @return The total number of bytes written to the socket for this response
      */
     public long getBytesWritten(boolean flush) {
@@ -692,11 +691,11 @@ public final class Response {
     public void setWriteListener(WriteListener listener) {
         if (listener == null) {
             throw new NullPointerException(
-                    sm.getString("response.nullWriteListener"));
+                sm.getString("response.nullWriteListener"));
         }
         if (getWriteListener() != null) {
             throw new IllegalStateException(
-                    sm.getString("response.writeListenerSet"));
+                sm.getString("response.writeListenerSet"));
         }
         // Note: This class is not used for HTTP upgrade so only need to test
         //       for async
@@ -704,7 +703,7 @@ public final class Response {
         action(ActionCode.ASYNC_IS_ASYNC, result);
         if (!result.get()) {
             throw new IllegalStateException(
-                    sm.getString("response.notAsync"));
+                sm.getString("response.notAsync"));
         }
 
         this.listener = listener;

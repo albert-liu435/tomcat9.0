@@ -23,7 +23,7 @@ import java.util.logging.LogManager;
 
 import aQute.bnd.annotation.spi.ServiceConsumer;
 
-/**
+/**Juli日志工厂
  * This is a modified LogFactory that uses a simple {@link ServiceLoader} based
  * discovery mechanism with a default of using JDK based logging. An
  * implementation that uses the full Commons Logging discovery mechanism is
@@ -65,9 +65,9 @@ import aQute.bnd.annotation.spi.ServiceConsumer;
  */
 @ServiceConsumer(value=org.apache.juli.logging.Log.class)
 public class LogFactory {
-
+    //单例工厂实例
     private static final LogFactory singleton = new LogFactory();
-
+    //用于存储Log的构造方法
     private final Constructor<? extends Log> discoveredLogConstructor;
 
     /**

@@ -17,6 +17,7 @@
 package org.apache.tomcat.util.digester;
 
 /**
+ * 规则集，一个规则集指的是对一个节点及下面的所有后续节点（子节点、子节点的子节点...）的解析
  * <p>Public interface defining a shorthand means of configuring a complete
  * set of related <code>Rule</code> definitions, possibly associated with
  * a particular namespace URI, in one operation.  To use an instance of a
@@ -41,7 +42,7 @@ public interface RuleSet {
      * by a Digester instance.
      *
      * @param digester Digester instance to which the new Rule instances
-     *  should be added.
+     *                 should be added.
      */
     void addRuleInstances(Digester digester);
 }

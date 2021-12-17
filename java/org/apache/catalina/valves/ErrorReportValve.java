@@ -42,7 +42,11 @@ import org.apache.tomcat.util.res.StringManager;
 import org.apache.tomcat.util.security.Escape;
 
 /**
+ * 主要用来在服务器处理异常时输出错误页面。如果我们没有在web.xml中添加错误处理页面，Tomcat返回的异常栈页面便是由ErrorReportValve生成的
+ * 实现Valve用于输出错误的HTML页面
  * <p>Implementation of a Valve that outputs HTML error pages.</p>
+ * <p>
+ * 该阀应连接在主机级别，但如果连接到上下文，它将工作
  *
  * <p>This Valve should be attached at the Host level, although it will work
  * if attached to a Context.</p>
@@ -79,11 +83,10 @@ public class ErrorReportValve extends ValveBase {
      * or an uncaught exception was thrown then the error handling will be
      * triggered.
      *
-     * @param request The servlet request to be processed
+     * @param request  The servlet request to be processed
      * @param response The servlet response to be created
-     *
-     * @exception IOException if an input/output error occurs
-     * @exception ServletException if a servlet error occurs
+     * @throws IOException      if an input/output error occurs
+     * @throws ServletException if a servlet error occurs
      */
     @Override
     public void invoke(Request request, Response response) throws IOException, ServletException {
@@ -111,7 +114,7 @@ public class ErrorReportValve extends ValveBase {
                     // Now close immediately to signal to the client that
                     // something went wrong
                     response.getCoyoteResponse().action(ActionCode.CLOSE_NOW,
-                            request.getAttribute(RequestDispatcher.ERROR_EXCEPTION));
+                        request.getAttribute(RequestDispatcher.ERROR_EXCEPTION));
                 }
             }
             return;
@@ -152,12 +155,13 @@ public class ErrorReportValve extends ValveBase {
 
 
     /**
+     * 向外输出错误报告
      * Prints out an error report.
      *
-     * @param request The request being processed
-     * @param response The response being generated
+     * @param request   The request being processed
+     * @param response  The response being generated
      * @param throwable The exception that occurred (which possibly wraps
-     *  a root cause exception
+     *                  a root cause exception
      */
     protected void report(Request request, Response response, Throwable throwable) {
 
@@ -220,7 +224,7 @@ public class ErrorReportValve extends ValveBase {
         String reason = null;
         String description = null;
         StringManager smClient = StringManager.getManager(
-                Constants.Package, request.getLocales());
+            Constants.Package, request.getLocales());
         response.setLocale(smClient.getLocale());
         try {
             reason = smClient.getString("http." + statusCode + ".reason");
@@ -244,7 +248,7 @@ public class ErrorReportValve extends ValveBase {
         sb.append("<head>");
         sb.append("<title>");
         sb.append(smClient.getString("errorReportValve.statusHeader",
-                String.valueOf(statusCode), reason));
+            String.valueOf(statusCode), reason));
         sb.append("</title>");
         sb.append("<style type=\"text/css\">");
         sb.append(TomcatCSS.TOMCAT_CSS);
@@ -252,7 +256,7 @@ public class ErrorReportValve extends ValveBase {
         sb.append("</head><body>");
         sb.append("<h1>");
         sb.append(smClient.getString("errorReportValve.statusHeader",
-                String.valueOf(statusCode), reason)).append("</h1>");
+            String.valueOf(statusCode), reason)).append("</h1>");
         if (isShowReport()) {
             sb.append("<hr class=\"line\" />");
             sb.append("<p><b>");
@@ -338,6 +342,7 @@ public class ErrorReportValve extends ValveBase {
     /**
      * Print out a partial servlet stack trace (truncating at the last
      * occurrence of javax.servlet.).
+     *
      * @param t The stack trace to process
      * @return the stack trace relative to the application layer
      */
@@ -348,7 +353,7 @@ public class ErrorReportValve extends ValveBase {
         int pos = elements.length;
         for (int i = elements.length - 1; i >= 0; i--) {
             if ((elements[i].getClassName().startsWith
-                 ("org.apache.catalina.core.ApplicationFilterChain"))
+                ("org.apache.catalina.core.ApplicationFilterChain"))
                 && (elements[i].getMethodName().equals("internalDoFilter"))) {
                 pos = i;
                 break;
@@ -356,7 +361,7 @@ public class ErrorReportValve extends ValveBase {
         }
         for (int i = 0; i < pos; i++) {
             if (!(elements[i].getClassName().startsWith
-                  ("org.apache.catalina.core."))) {
+                ("org.apache.catalina.core."))) {
                 trace.append('\t').append(elements[i].toString()).append(System.lineSeparator());
             }
         }
@@ -371,7 +376,7 @@ public class ErrorReportValve extends ValveBase {
         }
         if (!file.isFile() || !file.canRead()) {
             getContainer().getLogger().warn(
-                    sm.getString("errorReportValve.errorPageNotFound", location));
+                sm.getString("errorReportValve.errorPageNotFound", location));
             return false;
         }
 
@@ -381,11 +386,11 @@ public class ErrorReportValve extends ValveBase {
         response.setCharacterEncoding("UTF-8");
 
         try (OutputStream os = response.getOutputStream();
-                InputStream is = new FileInputStream(file);){
+             InputStream is = new FileInputStream(file);) {
             IOTools.flow(is, os);
         } catch (IOException e) {
             getContainer().getLogger().warn(
-                    sm.getString("errorReportValve.errorPageIOException", location), e);
+                sm.getString("errorReportValve.errorPageIOException", location), e);
             return false;
         }
 
