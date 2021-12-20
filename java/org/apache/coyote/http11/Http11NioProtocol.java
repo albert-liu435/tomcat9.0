@@ -27,6 +27,8 @@ import org.apache.tomcat.util.net.NioEndpoint;
  * Abstract the protocol implementation, including threading, etc.
  * Processor is single threaded and specific to stream-based protocols,
  * will not fit Jk protocols like JNI.
+ * Http11NioProtocol创建一个org.apache.tomcat.util.net.NioEndpoint实例,然后将监听端口并解析请求的工作全被委托给NioEndpoint实现。
+ * tomcat在使用Http11NioProtocol解析HTTP请求时一共设计了三种线程，分别为Acceptor，Poller和Worker。
  *
  * @author Remy Maucherat
  * @author Costin Manolache

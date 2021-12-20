@@ -22,6 +22,7 @@ import org.apache.tomcat.util.net.NioChannel;
 import org.apache.tomcat.util.net.NioEndpoint;
 
 /**
+ * 这是AJP基于NIO的协议处理程序实现。
  * This the NIO based protocol handler implementation for AJP.
  */
 public class AjpNioProtocol extends AbstractAjpProtocol<NioChannel> {
@@ -29,7 +30,9 @@ public class AjpNioProtocol extends AbstractAjpProtocol<NioChannel> {
     private static final Log log = LogFactory.getLog(AjpNioProtocol.class);
 
     @Override
-    protected Log getLog() { return log; }
+    protected Log getLog() {
+        return log;
+    }
 
 
     // ------------------------------------------------------------ Constructor

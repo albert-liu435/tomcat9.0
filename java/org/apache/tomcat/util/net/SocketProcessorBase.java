@@ -18,6 +18,12 @@ package org.apache.tomcat.util.net;
 
 import java.util.Objects;
 
+/**
+ * SocketProcessor的基类
+ * Worker线程即SocketProcessor是用来处理Socket请求的
+ *
+ * @param <S>
+ */
 public abstract class SocketProcessorBase<S> implements Runnable {
 
     protected SocketWrapperBase<S> socketWrapper;

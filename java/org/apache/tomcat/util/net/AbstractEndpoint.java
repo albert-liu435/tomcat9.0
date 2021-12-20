@@ -55,10 +55,13 @@ import org.apache.tomcat.util.threads.TaskThreadFactory;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 
 /**
+ * Endpoint用来处理底层Socket的网络连接
+ * Endpoint由于是处理底层的Socket网络连接，因此Endpoint是用来实现TCP/IP协议的
+ *
  * @param <S> The type used by the socket wrapper associated with this endpoint.
- *            May be the same as U.
+ *            May be the same as U. 与此端点关联的套接字包装所使用的类型。
  * @param <U> The type of the underlying socket used by this endpoint. May be
- *            the same as S.
+ *            the same as S.此终结点使用的基础套接字的类型
  * @author Mladen Turk
  * @author Remy Maucherat
  */
@@ -68,9 +71,15 @@ public abstract class AbstractEndpoint<S, U> {
 
     protected static final StringManager sm = StringManager.getManager(AbstractEndpoint.class);
 
+    /**
+     * Handler用于处理接收到的Socket，在内部调用Processor进行处理。
+     *
+     * @param <S>
+     */
     public static interface Handler<S> {
 
         /**
+         * 不同的套接字类型
          * Different types of socket states to react upon.
          */
         public enum SocketState {
@@ -183,6 +192,7 @@ public abstract class AbstractEndpoint<S, U> {
 
 
     /**
+     * 端点处理的连接数的计数器
      * counter for nr of connections handled by an endpoint
      */
     private volatile LimitLatch connectionLimitLatch = null;
@@ -196,7 +206,7 @@ public abstract class AbstractEndpoint<S, U> {
         return socketProperties;
     }
 
-    /**
+    /*用于监听请求，并将连接发送给worker线程
      * Thread used to accept new connections and pass them to worker threads.
      */
     protected Acceptor<U> acceptor;
@@ -511,7 +521,7 @@ public abstract class AbstractEndpoint<S, U> {
         return acceptorThreadPriority;
     }
 
-
+    //最大连接数
     private int maxConnections = 8 * 1024;
 
     public void setMaxConnections(int maxCon) {
@@ -590,6 +600,7 @@ public abstract class AbstractEndpoint<S, U> {
 
 
     /**
+     * server socket端口
      * Server socket port.
      */
     private int port = -1;
@@ -758,6 +769,7 @@ public abstract class AbstractEndpoint<S, U> {
 
 
     /**
+     * socket超时时间
      * Socket timeout.
      *
      * @return The current socket timeout for sockets created by this endpoint
@@ -1331,6 +1343,7 @@ public abstract class AbstractEndpoint<S, U> {
 
     private void bindWithCleanup() throws Exception {
         try {
+            //执行bind()方法
             bind();
         } catch (Throwable t) {
             // Ensure open sockets etc. are cleaned up if something goes
@@ -1343,6 +1356,7 @@ public abstract class AbstractEndpoint<S, U> {
 
 
     public final void init() throws Exception {
+        //执行bind()方法
         if (bindOnInit) {
             bindWithCleanup();
             bindState = BindState.BOUND_ON_INIT;

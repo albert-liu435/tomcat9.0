@@ -16,15 +16,6 @@
  */
 package org.apache.catalina.connector;
 
-import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashSet;
-
-import javax.management.ObjectName;
-
 import org.apache.catalina.Globals;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleState;
@@ -48,8 +39,18 @@ import org.apache.tomcat.util.net.SSLHostConfig;
 import org.apache.tomcat.util.net.openssl.OpenSSLImplementation;
 import org.apache.tomcat.util.res.StringManager;
 
+import javax.management.ObjectName;
+import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashSet;
+
 
 /**
+ * Connector用于接受请求并将请求封装成Request和Response，然后交给Container进行处理，Container处理完之后再交给Connector返回给客户端。
+ * Connector是Service的子容器
  * Connector主要负责开启Socket并监听客户端请求、返回响应数据
  * <p>
  * 将读取的
@@ -65,6 +66,11 @@ import org.apache.tomcat.util.res.StringManager;
  * <p>
  * Connector启动时，Endpoint会启动线程来监听服务器端口，并在接收到请求后调用Processor进行数据的读取
  * Implementation of a Coyote connector.
+ * <p>
+ * <p>
+ * 1、Http Connector：解析HTTP请求，又分为BIO Http Connector和NIO Http Connector，即阻塞IO Connector和非阻塞IO Connector。本文主要分析NIO Http Connector的实现过程。
+ * 2、AJP：基于AJP协议，用于Tomcat与HTTP服务器通信定制的协议，能提供较高的通信速度和效率。如与Apache服务器集成时，采用这个协议。
+ * 3、APR HTTP Connector：用C实现，通过JNI调用的。主要提升对静态资源（如HTML、图片、CSS、JS等）的访问性能。
  *
  * @author Craig R. McClanahan
  * @author Remy Maucherat
@@ -75,6 +81,7 @@ public class Connector extends LifecycleMBeanBase {
 
 
     /**
+     * 启用立面回收的备用标志。
      * Alternate flag to enable recycling of facades.
      */
     public static final boolean RECYCLE_FACADES =
@@ -87,19 +94,20 @@ public class Connector extends LifecycleMBeanBase {
     // ------------------------------------------------------------ Constructor
 
     /**
-     * 默认为HTTP/1.1
+     * //默认connector为HTTP/1.1 NIO
      * Defaults to using HTTP/1.1 NIO implementation.
      */
     public Connector() {
         this("HTTP/1.1");
     }
 
-
+    //根据protocol实现Connector
     public Connector(String protocol) {
         boolean apr = AprStatus.getUseAprConnector() && AprStatus.isInstanceCreated()
             && AprLifecycleListener.isAprAvailable();
         ProtocolHandler p = null;
         try {
+            // 通过反射实例化一个protocolHandle,之后对请求数据的解析都由该protocolHandle完成，例如Http11AprProtocol
             p = ProtocolHandler.create(protocol, apr);
         } catch (Exception e) {
             log.error(sm.getString(
@@ -565,6 +573,8 @@ public class Connector extends LifecycleMBeanBase {
 
 
     /**
+     * connector监听的端口，0表示随机监听空闲的端口
+     *
      * @return the port number on which this connector is configured to listen
      * for requests. The special value of 0 means select a random free port
      * when the socket is bound.
@@ -1025,6 +1035,7 @@ public class Connector extends LifecycleMBeanBase {
                 sm.getString("coyoteConnector.protocolHandlerInstantiationFailed"));
         }
 
+        //初始化Adapter
         // Initialize adapter
         adapter = new CoyoteAdapter(this);
         protocolHandler.setAdapter(adapter);
@@ -1033,6 +1044,7 @@ public class Connector extends LifecycleMBeanBase {
         }
 
         // Make sure parseBodyMethodsSet has a default
+        //设置接受body的method列表，默认为POST
         if (null == parseBodyMethodsSet) {
             setParseBodyMethods(getParseBodyMethods());
         }
@@ -1057,6 +1069,7 @@ public class Connector extends LifecycleMBeanBase {
         }
 
         try {
+            //初始化protocolHandler
             protocolHandler.init();
         } catch (Exception e) {
             throw new LifecycleException(
@@ -1081,10 +1094,11 @@ public class Connector extends LifecycleMBeanBase {
             throw new LifecycleException(sm.getString(
                 "coyoteConnector.invalidPort", Integer.valueOf(getPortWithOffset())));
         }
-
+        //设置启动状态
         setState(LifecycleState.STARTING);
 
         try {
+            //启动protocolHandler
             protocolHandler.start();
         } catch (Exception e) {
             throw new LifecycleException(

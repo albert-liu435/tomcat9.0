@@ -25,6 +25,9 @@ import org.apache.tomcat.util.net.SocketEvent;
 import org.apache.tomcat.util.net.SocketWrapperBase;
 
 /**
+ * Processor用于将Endpoint接收到的Socket封装成Request
+ * Processor用来实现HTTP协议
+ *
  * 用于按照指定的协议读取数据
  * Common interface for processors of all protocols.
  */

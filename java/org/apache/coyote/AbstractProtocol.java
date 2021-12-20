@@ -51,6 +51,11 @@ import org.apache.tomcat.util.net.SocketEvent;
 import org.apache.tomcat.util.net.SocketWrapperBase;
 import org.apache.tomcat.util.res.StringManager;
 
+/**
+ * 实现了ProtocolHandler接口的抽象的协议处理器
+ *
+ * @param <S>
+ */
 public abstract class AbstractProtocol<S> implements ProtocolHandler,
     MBeanRegistration {
 
@@ -61,6 +66,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
 
 
     /**
+     * 用于使用自动端口绑定为连接器生成唯一JMX名称的计数器
      * Counter used to generate unique JMX names for connectors using automatic
      * port binding.
      */
@@ -662,22 +668,28 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
             Registry.getRegistry(null, null).registerComponent(
                 getHandler().getGlobal(), rgOname, null);
         }
-
+        //设置endpoint的名字，默认为：http-nio-{port}
         String endpointName = getName();
         endpoint.setName(endpointName.substring(1, endpointName.length() - 1));
         endpoint.setDomain(domain);
 
+        //初始化endpoint
         endpoint.init();
     }
 
 
+    /**
+     * 执行start方法
+     *
+     * @throws Exception
+     */
     @Override
     public void start() throws Exception {
         if (getLog().isInfoEnabled()) {
             getLog().info(sm.getString("abstractProtocolHandler.start", getName()));
             logPortOffset();
         }
-
+        //调用`Endpoint.start()`方法
         endpoint.start();
         monitorFuture = getUtilityExecutor().scheduleWithFixedDelay(
             () -> {

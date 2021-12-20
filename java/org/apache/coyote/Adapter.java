@@ -19,8 +19,11 @@ package org.apache.coyote;
 import org.apache.tomcat.util.net.SocketEvent;
 
 /**
+ * Adapter用于将Request交给Container进行具体的处理。
+ * Adapter将请求适配到Servlet容器进行具体的处理
+ * <p>
+ * 适配器，表示基于coyote的servlet容器中的入口点
  * Adapter. This represents the entry point in a coyote-based servlet container.
- *
  *
  * @author Remy Maucherat
  * @see ProtocolHandler
@@ -28,22 +31,22 @@ import org.apache.tomcat.util.net.SocketEvent;
 public interface Adapter {
 
     /**
+     * 执行service方法，并通知所有的监听器
      * Call the service method, and notify all listeners
      *
      * @param req The request object
      * @param res The response object
-     *
-     * @exception Exception if an error happens during handling of
-     *   the request. Common errors are:
-     *   <ul><li>IOException if an input/output error occurs and we are
-     *   processing an included servlet (otherwise it is swallowed and
-     *   handled by the top level error handler mechanism)
-     *       <li>ServletException if a servlet throws an exception and
-     *  we are processing an included servlet (otherwise it is swallowed
-     *  and handled by the top level error handler mechanism)
-     *  </ul>
-     *  Tomcat should be able to handle and log any other exception ( including
-     *  runtime exceptions )
+     * @throws Exception if an error happens during handling of
+     *                   the request. Common errors are:
+     *                    <ul><li>IOException if an input/output error occurs and we are
+     *                    processing an included servlet (otherwise it is swallowed and
+     *                    handled by the top level error handler mechanism)
+     *                        <li>ServletException if a servlet throws an exception and
+     *                   we are processing an included servlet (otherwise it is swallowed
+     *                   and handled by the top level error handler mechanism)
+     *                   </ul>
+     *                   Tomcat should be able to handle and log any other exception ( including
+     *                   runtime exceptions )
      */
     public void service(Request req, Response res) throws Exception;
 
@@ -54,17 +57,15 @@ public interface Adapter {
      *
      * @param req The request object
      * @param res The response object
-     *
      * @return <code>true</code> if processing can continue, otherwise
-     *         <code>false</code> in which case an appropriate error will have
-     *         been set on the response
-     *
+     * <code>false</code> in which case an appropriate error will have
+     * been set on the response
      * @throws Exception If the processing fails unexpectedly
      */
     public boolean prepare(Request req, Response res) throws Exception;
 
-    public boolean asyncDispatch(Request req,Response res, SocketEvent status)
-            throws Exception;
+    public boolean asyncDispatch(Request req, Response res, SocketEvent status)
+        throws Exception;
 
     public void log(Request req, Response res, long time);
 
@@ -74,10 +75,8 @@ public interface Adapter {
      * check when a processor is being recycled and may be returned to a pool
      * for reuse.
      *
-     * @param req
-     *            Request
-     * @param res
-     *            Response
+     * @param req Request
+     * @param res Response
      */
     public void checkRecycled(Request req, Response res);
 
@@ -85,7 +84,7 @@ public interface Adapter {
      * Provide the name of the domain to use to register MBeans for components
      * associated with the connector.
      *
-     * @return  The MBean domain name
+     * @return The MBean domain name
      */
     public String getDomain();
 }

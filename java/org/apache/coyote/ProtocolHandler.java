@@ -32,6 +32,13 @@ import org.apache.tomcat.util.net.SSLHostConfig;
  * This is the main interface to be implemented by a coyote protocol.
  * Adapter is the main interface to be implemented by a coyote servlet
  * container.
+ * <p>
+ * 每一个Connector对应了一个protocolHandler，一个protocolHandler被设计用来监听服务器某个端口的网络请求，但并不负责处理请求(处理请求由Container组件完成)
+ * <p>
+ * <p>
+ * ajp和http11是两种不同的协议
+ * nio、nio2和apr是不同的通信方式
+ * 协议和通信方式可以相互组合
  *
  * @author Remy Maucherat
  * @author Costin Manolache
@@ -40,6 +47,7 @@ import org.apache.tomcat.util.net.SSLHostConfig;
 public interface ProtocolHandler {
 
     /**
+     * 返回协议处理器的相适应的适配器
      * Return the adapter associated with the protocol handler.
      *
      * @return the adapter
@@ -48,6 +56,7 @@ public interface ProtocolHandler {
 
 
     /**
+     * 设置适配器
      * The adapter, used to call the connector.
      *
      * @param adapter The adapter to associate
@@ -56,6 +65,7 @@ public interface ProtocolHandler {
 
 
     /**
+     * 获取执行器
      * The executor, provide access to the underlying thread pool.
      *
      * @return The executor used to process requests
@@ -64,6 +74,7 @@ public interface ProtocolHandler {
 
 
     /**
+     * 设置执行器
      * Set the optional executor that will be used by the connector.
      *
      * @param executor the executor
@@ -72,6 +83,7 @@ public interface ProtocolHandler {
 
 
     /**
+     * 获取定时调度器
      * Get the utility executor that should be used by the protocol handler.
      *
      * @return the executor
@@ -88,6 +100,7 @@ public interface ProtocolHandler {
 
 
     /**
+     * 初始化协议
      * Initialise the protocol.
      *
      * @throws Exception If the protocol handler fails to initialise
@@ -105,6 +118,7 @@ public interface ProtocolHandler {
 
 
     /**
+     * 暂停协议
      * Pause the protocol (optional).
      *
      * @throws Exception If the protocol handler fails to pause
@@ -113,6 +127,7 @@ public interface ProtocolHandler {
 
 
     /**
+     * 恢复协议
      * Resume the protocol (optional).
      *
      * @throws Exception If the protocol handler fails to resume
@@ -121,6 +136,7 @@ public interface ProtocolHandler {
 
 
     /**
+     * 停止协议
      * Stop the protocol.
      *
      * @throws Exception If the protocol handler fails to stop
@@ -129,6 +145,7 @@ public interface ProtocolHandler {
 
 
     /**
+     * 销毁协议
      * Destroy the protocol (optional).
      *
      * @throws Exception If the protocol handler fails to destroy
@@ -232,6 +249,7 @@ public interface ProtocolHandler {
 
 
     /**
+     * 根据给定的protocol创建ProtocolHandler
      * Create a new ProtocolHandler for the given protocol.
      *
      * @param protocol the protocol

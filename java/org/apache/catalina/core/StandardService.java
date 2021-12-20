@@ -536,7 +536,7 @@ public class StandardService extends LifecycleMBeanBase implements Service {
     }
 
 
-    /**
+    /**调用启动前初始化。这用于允许连接器绑定到Unix操作环境下的受限端口。
      * Invoke a pre-startup initialization. This is used to allow connectors
      * to bind to restricted ports under Unix operating environments.
      */

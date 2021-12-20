@@ -17,6 +17,7 @@
 package org.apache.tomcat.util.collections;
 
 /**
+ * 线程安全的同步队列，tomcat自己封装的队列
  * This is intended as a (mostly) GC-free alternative to
  * {@link java.util.concurrent.ConcurrentLinkedQueue} when the requirement is to
  * create an unbounded queue with no requirement to shrink the queue. The aim is

@@ -17,6 +17,7 @@
 package org.apache.catalina.core;
 
 /**
+ * 持有的APR状态标志
  * Holds APR status.
  */
 public class AprStatus {
@@ -24,6 +25,7 @@ public class AprStatus {
     private static volatile boolean aprAvailable = false;
     private static volatile boolean useAprConnector = false;
     private static volatile boolean useOpenSSL = true;
+    //标志实例是否创建
     private static volatile boolean instanceCreated = false;
 
 
