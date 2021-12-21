@@ -21,12 +21,17 @@ import java.nio.ByteBuffer;
 
 import org.apache.tomcat.util.buf.ByteBufferUtils;
 
+/**
+ * socket buffer处理器
+ */
 public class SocketBufferHandler {
 
+    //空实现
     static SocketBufferHandler EMPTY = new SocketBufferHandler(0, 0, false) {
         @Override
         public void expand(int newSize) {
         }
+
         /*
          * Http2AsyncParser$FrameCompletionHandler will return incomplete
          * frame(s) to the buffer. If the previous frame (or concurrent write to
@@ -49,7 +54,7 @@ public class SocketBufferHandler {
     private final boolean direct;
 
     public SocketBufferHandler(int readBufferSize, int writeBufferSize,
-            boolean direct) {
+                               boolean direct) {
         this.direct = direct;
         if (direct) {
             readBuffer = ByteBuffer.allocateDirect(readBufferSize);

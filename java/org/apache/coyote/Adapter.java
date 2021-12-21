@@ -23,6 +23,8 @@ import org.apache.tomcat.util.net.SocketEvent;
  * Adapter将请求适配到Servlet容器进行具体的处理
  * <p>
  * 适配器，表示基于coyote的servlet容器中的入口点
+ * <p>
+ * Adapter用于连接Connector和Container，起到承上启下的作用
  * Adapter. This represents the entry point in a coyote-based servlet container.
  *
  * @author Remy Maucherat

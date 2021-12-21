@@ -18,6 +18,7 @@ package org.apache.coyote;
 
 
 /**
+ * 动作钩子，
  * Action hook. Actions represent the callback mechanism used by
  * coyote servlet containers to request operations on the coyote connectors.
  * Some standard actions are defined in ActionCode, however custom

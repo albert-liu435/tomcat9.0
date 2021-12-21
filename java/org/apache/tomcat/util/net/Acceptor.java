@@ -26,8 +26,12 @@ import org.apache.tomcat.util.ExceptionUtils;
 import org.apache.tomcat.util.res.StringManager;
 
 /**
- * Acceptor实现了Runnable接口，根据其命名就知道它是一个接收器，负责接收socket，其接收方法是serverSocket.accept()方式，获得SocketChannel对象，然后封装成tomcat自定义的org.apache.tomcat.util.net.NioChannel。
+ * Acceptor实现了Runnable接口，根据其命名就知道它是一个接收器，负责接收socket，其接收方法是serverSocket.accept()方式，
+ * 获得SocketChannel对象，然后封装成tomcat自定义的org.apache.tomcat.util.net.NioChannel。
  * 虽然是Nio，但在接收socket时仍然使用传统的方法，使用阻塞方式实现
+ * <p>
+ * Acceptor线程主要用于监听套接字，将已连接套接字转给Poller线程。Acceptor线程数由AbstracEndPoint的acceptorThreadCount成员变量控制，
+ * 默认值为1
  *
  * @param <U>
  */
@@ -115,6 +119,7 @@ public class Acceptor<U> implements Runnable {
                     }
                 }
 
+                //如果`Endpoint`终止运行了，则`Acceptor`也会终止
                 if (stopCalled) {
                     break;
                 }
@@ -123,6 +128,7 @@ public class Acceptor<U> implements Runnable {
                 try {
                     //连接数到达最大值时，await等待释放connection，在Endpoint的startInterval方法中设置了最大连接数
                     //if we have reached max connections, wait
+                    //如果请求达到了最大连接数，则wait直到连接数降下来
                     endpoint.countUpOrAwaitConnection();
 
                     // Endpoint might have been paused while waiting for latch
@@ -136,6 +142,7 @@ public class Acceptor<U> implements Runnable {
                         // Accept the next incoming connection from the server
                         // socket
                         //接收socket请求
+                        //接受下一次连接的socket
                         socket = endpoint.serverSocketAccept();
                     } catch (Exception ioe) {
                         // We didn't get a socket
@@ -158,6 +165,7 @@ public class Acceptor<U> implements Runnable {
                         // an appropriate processor if successful
                         // endpoint的setSocketOptions方法对socket进行配置
                         //Acceptor完成了socket请求的接收，然后交给NioEndpoint 进行配置，继续追踪Endpoint的setSocketOptions方法。
+                        //setSocketOptions()`这儿是关键，会将socket以事件的方式传递给poller
                         if (!endpoint.setSocketOptions(socket)) {
                             endpoint.closeSocket(socket);
                         }

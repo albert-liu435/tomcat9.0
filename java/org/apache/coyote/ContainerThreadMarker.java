@@ -17,6 +17,7 @@
 package org.apache.coyote;
 
 /**
+ * 用于标记当前线程正在处理数据
  * Used to mark threads that have been allocated by the container to process
  * data from an incoming connection. Application created threads are not
  * container threads and neither are threads taken from the container thread

@@ -363,6 +363,8 @@ public class Connector extends LifecycleMBeanBase {
 
 
     /**
+     * 返回StandardService
+     *
      * @return the <code>Service</code> with which we are associated (if any).
      */
     public Service getService() {

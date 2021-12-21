@@ -26,12 +26,13 @@ import java.nio.charset.StandardCharsets;
 import org.apache.tomcat.util.res.StringManager;
 
 /**
- *  All URL decoding happens here. This way we can reuse, review, optimize
- *  without adding complexity to the buffers.
+ * URL解码器
+ * All URL decoding happens here. This way we can reuse, review, optimize
+ * without adding complexity to the buffers.
+ * <p>
+ * The conversion will modify the original buffer.
  *
- *  The conversion will modify the original buffer.
- *
- *  @author Costin Manolache
+ * @author Costin Manolache
  */
 public final class UDecoder {
 
@@ -39,10 +40,11 @@ public final class UDecoder {
 
     @Deprecated
     public static final boolean ALLOW_ENCODED_SLASH =
-            Boolean.parseBoolean(System.getProperty("org.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH", "false"));
+        Boolean.parseBoolean(System.getProperty("org.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH", "false"));
 
     private static class DecodeException extends CharConversionException {
         private static final long serialVersionUID = 1L;
+
         public DecodeException(String s) {
             super(s);
         }
@@ -54,16 +56,22 @@ public final class UDecoder {
         }
     }
 
-    /** Unexpected end of data. */
+    /**
+     * Unexpected end of data.
+     */
     private static final IOException EXCEPTION_EOF = new DecodeException(sm.getString("uDecoder.eof"));
 
-    /** %xx with not-hex digit */
+    /**
+     * %xx with not-hex digit
+     */
     private static final IOException EXCEPTION_NOT_HEX_DIGIT = new DecodeException(
-            "isHexDigit");
+        "isHexDigit");
 
-    /** %-encoded slash is forbidden in resource path */
+    /**
+     * %-encoded slash is forbidden in resource path
+     */
     private static final IOException EXCEPTION_SLASH = new DecodeException(
-            "noSlash");
+        "noSlash");
 
 
     /**
@@ -73,8 +81,7 @@ public final class UDecoder {
      *
      * @param mb    The URL encoded bytes
      * @param query {@code true} if this is a query string. For a query string
-     *                  '+' will be decoded to ' '
-     *
+     *              '+' will be decoded to ' '
      * @throws IOException Invalid %xx URL encoding
      */
     public void convert(ByteChunk mb, boolean query) throws IOException {
@@ -90,11 +97,11 @@ public final class UDecoder {
      * URLDecode, will modify the source. Assumes source bytes are encoded using
      * a superset of US-ASCII as per RFC 7230.
      *
-     * @param mb                        The URL encoded bytes
-     * @param encodedSolidusHandling    How should the %2f sequence handled by
-     *                                      the decoder? For query strings this
-     *                                      parameter will be ignored and the
-     *                                      %2f sequence will be decoded
+     * @param mb                     The URL encoded bytes
+     * @param encodedSolidusHandling How should the %2f sequence handled by
+     *                               the decoder? For query strings this
+     *                               parameter will be ignored and the
+     *                               %2f sequence will be decoded
      * @throws IOException Invalid %xx URL encoding
      */
     public void convert(ByteChunk mb, EncodedSolidusHandling encodedSolidusHandling) throws IOException {
@@ -104,64 +111,64 @@ public final class UDecoder {
 
     private void convert(ByteChunk mb, boolean query, EncodedSolidusHandling encodedSolidusHandling) throws IOException {
 
-        int start=mb.getOffset();
-        byte buff[]=mb.getBytes();
-        int end=mb.getEnd();
+        int start = mb.getOffset();
+        byte buff[] = mb.getBytes();
+        int end = mb.getEnd();
 
-        int idx= ByteChunk.findByte( buff, start, end, (byte) '%' );
-        int idx2=-1;
-        if( query ) {
-            idx2= ByteChunk.findByte( buff, start, (idx >= 0 ? idx : end), (byte) '+' );
+        int idx = ByteChunk.findByte(buff, start, end, (byte) '%');
+        int idx2 = -1;
+        if (query) {
+            idx2 = ByteChunk.findByte(buff, start, (idx >= 0 ? idx : end), (byte) '+');
         }
-        if( idx<0 && idx2<0 ) {
+        if (idx < 0 && idx2 < 0) {
             return;
         }
 
         // idx will be the smallest positive index ( first % or + )
-        if( (idx2 >= 0 && idx2 < idx) || idx < 0 ) {
-            idx=idx2;
+        if ((idx2 >= 0 && idx2 < idx) || idx < 0) {
+            idx = idx2;
         }
 
-        for( int j=idx; j<end; j++, idx++ ) {
-            if( buff[ j ] == '+' && query) {
-                buff[idx]= (byte)' ' ;
-            } else if( buff[ j ] != '%' ) {
-                buff[idx]= buff[j];
+        for (int j = idx; j < end; j++, idx++) {
+            if (buff[j] == '+' && query) {
+                buff[idx] = (byte) ' ';
+            } else if (buff[j] != '%') {
+                buff[idx] = buff[j];
             } else {
                 // read next 2 digits
-                if( j+2 >= end ) {
+                if (j + 2 >= end) {
                     throw EXCEPTION_EOF;
                 }
-                byte b1= buff[j+1];
-                byte b2=buff[j+2];
-                if( !isHexDigit( b1 ) || ! isHexDigit(b2 )) {
+                byte b1 = buff[j + 1];
+                byte b2 = buff[j + 2];
+                if (!isHexDigit(b1) || !isHexDigit(b2)) {
                     throw EXCEPTION_NOT_HEX_DIGIT;
                 }
 
-                j+=2;
-                int res=x2c( b1, b2 );
+                j += 2;
+                int res = x2c(b1, b2);
                 if (res == '/') {
                     switch (encodedSolidusHandling) {
-                    case DECODE: {
-                        buff[idx]=(byte)res;
-                        break;
-                    }
-                    case REJECT: {
-                        throw EXCEPTION_SLASH;
-                    }
-                    case PASS_THROUGH: {
-                        buff[idx++] = buff[j-2];
-                        buff[idx++] = buff[j-1];
-                        buff[idx] = buff[j];
-                    }
+                        case DECODE: {
+                            buff[idx] = (byte) res;
+                            break;
+                        }
+                        case REJECT: {
+                            throw EXCEPTION_SLASH;
+                        }
+                        case PASS_THROUGH: {
+                            buff[idx++] = buff[j - 2];
+                            buff[idx++] = buff[j - 1];
+                            buff[idx] = buff[j];
+                        }
                     }
                 } else {
-                    buff[idx]=(byte)res;
+                    buff[idx] = (byte) res;
                 }
             }
         }
 
-        mb.setEnd( idx );
+        mb.setEnd(idx);
     }
 
     // -------------------- Additional methods --------------------
@@ -171,63 +178,61 @@ public final class UDecoder {
      * <p>
      * <b>WARNING:</b> This method assumes US-ASCII encoding.
      *
-     * @param mb The URL encoded chars
+     * @param mb    The URL encoded chars
      * @param query <code>true</code> if this is a query string
      * @throws IOException Invalid %xx URL encoding
-     *
      * @deprecated Unused. Will be removed in Tomcat 10
      */
     @Deprecated
-    public void convert( CharChunk mb, boolean query )
-        throws IOException
-    {
+    public void convert(CharChunk mb, boolean query)
+        throws IOException {
         //        log( "Converting a char chunk ");
-        int start=mb.getOffset();
-        char buff[]=mb.getBuffer();
-        int cend=mb.getEnd();
+        int start = mb.getOffset();
+        char buff[] = mb.getBuffer();
+        int cend = mb.getEnd();
 
-        int idx= CharChunk.indexOf( buff, start, cend, '%' );
-        int idx2=-1;
-        if( query ) {
-            idx2= CharChunk.indexOf( buff, start, (idx >= 0 ? idx : cend), '+' );
+        int idx = CharChunk.indexOf(buff, start, cend, '%');
+        int idx2 = -1;
+        if (query) {
+            idx2 = CharChunk.indexOf(buff, start, (idx >= 0 ? idx : cend), '+');
         }
-        if( idx<0 && idx2<0 ) {
+        if (idx < 0 && idx2 < 0) {
             return;
         }
 
         // idx will be the smallest positive index ( first % or + )
-        if( (idx2 >= 0 && idx2 < idx) || idx < 0 ) {
-            idx=idx2;
+        if ((idx2 >= 0 && idx2 < idx) || idx < 0) {
+            idx = idx2;
         }
 
         final boolean noSlash = !(ALLOW_ENCODED_SLASH || query);
 
-        for( int j=idx; j<cend; j++, idx++ ) {
-            if( buff[ j ] == '+' && query ) {
-                buff[idx]=( ' ' );
-            } else if( buff[ j ] != '%' ) {
-                buff[idx]=buff[j];
+        for (int j = idx; j < cend; j++, idx++) {
+            if (buff[j] == '+' && query) {
+                buff[idx] = (' ');
+            } else if (buff[j] != '%') {
+                buff[idx] = buff[j];
             } else {
                 // read next 2 digits
-                if( j+2 >= cend ) {
+                if (j + 2 >= cend) {
                     // invalid
                     throw EXCEPTION_EOF;
                 }
-                char b1= buff[j+1];
-                char b2=buff[j+2];
-                if( !isHexDigit( b1 ) || ! isHexDigit(b2 )) {
+                char b1 = buff[j + 1];
+                char b2 = buff[j + 2];
+                if (!isHexDigit(b1) || !isHexDigit(b2)) {
                     throw EXCEPTION_NOT_HEX_DIGIT;
                 }
 
-                j+=2;
-                int res=x2c( b1, b2 );
+                j += 2;
+                int res = x2c(b1, b2);
                 if (noSlash && (res == '/')) {
                     throw EXCEPTION_SLASH;
                 }
-                buff[idx]=(char)res;
+                buff[idx] = (char) res;
             }
         }
-        mb.setEnd( idx );
+        mb.setEnd(idx);
     }
 
     /**
@@ -235,37 +240,35 @@ public final class UDecoder {
      * <p>
      * <b>WARNING:</b> This method assumes US-ASCII encoding.
      *
-     * @param mb The URL encoded String, bytes or chars
+     * @param mb    The URL encoded String, bytes or chars
      * @param query <code>true</code> if this is a query string
      * @throws IOException Invalid %xx URL encoding
-     *
      * @deprecated Unused. Will be removed in Tomcat 10
      */
     @Deprecated
     public void convert(MessageBytes mb, boolean query)
-        throws IOException
-    {
+        throws IOException {
 
         switch (mb.getType()) {
-        case MessageBytes.T_STR:
-            String strValue=mb.toString();
-            if( strValue==null ) {
-                return;
-            }
-            try {
-                mb.setString( convert( strValue, query ));
-            } catch (RuntimeException ex) {
-                throw new DecodeException(ex.getMessage());
-            }
-            break;
-        case MessageBytes.T_CHARS:
-            CharChunk charC=mb.getCharChunk();
-            convert( charC, query );
-            break;
-        case MessageBytes.T_BYTES:
-            ByteChunk bytesC=mb.getByteChunk();
-            convert( bytesC, query );
-            break;
+            case MessageBytes.T_STR:
+                String strValue = mb.toString();
+                if (strValue == null) {
+                    return;
+                }
+                try {
+                    mb.setString(convert(strValue, query));
+                } catch (RuntimeException ex) {
+                    throw new DecodeException(ex.getMessage());
+                }
+                break;
+            case MessageBytes.T_CHARS:
+                CharChunk charC = mb.getCharChunk();
+                convert(charC, query);
+                break;
+            case MessageBytes.T_BYTES:
+                ByteChunk bytesC = mb.getByteChunk();
+                convert(bytesC, query);
+                break;
         }
     }
 
@@ -276,20 +279,18 @@ public final class UDecoder {
      * <p>
      * FIXME: this is inefficient.
      *
-     * @param str The URL encoded string
+     * @param str   The URL encoded string
      * @param query <code>true</code> if this is a query string
      * @return the decoded string
-     *
      * @deprecated Unused. Will be removed in Tomcat 10
      */
     @Deprecated
-    public final String convert(String str, boolean query)
-    {
+    public final String convert(String str, boolean query) {
         if (str == null) {
-            return  null;
+            return null;
         }
 
-        if( (!query || str.indexOf( '+' ) < 0) && str.indexOf( '%' ) < 0 ) {
+        if ((!query || str.indexOf('+') < 0) && str.indexOf('%') < 0) {
             return str;
         }
 
@@ -313,7 +314,7 @@ public final class UDecoder {
 
             // if there were non-metacharacters, copy them all as a block
             if (laPos > strPos) {
-                dec.append(str.substring(strPos,laPos));
+                dec.append(str.substring(strPos, laPos));
                 strPos = laPos;
             }
 
@@ -333,7 +334,7 @@ public final class UDecoder {
                 // it
                 //                try {
                 char res = (char) Integer.parseInt(
-                        str.substring(strPos + 1, strPos + 3), 16);
+                    str.substring(strPos + 1, strPos + 3), 16);
                 if (noSlash && (res == '/')) {
                     throw new IllegalArgumentException(sm.getString("uDecoder.noSlash"));
                 }
@@ -354,9 +355,8 @@ public final class UDecoder {
      *
      * @param str The url-encoded string
      * @return the decoded string
-     * @exception IllegalArgumentException if a '%' character is not followed
-     * by a valid 2-digit hexadecimal number
-     *
+     * @throws IllegalArgumentException if a '%' character is not followed
+     *                                  by a valid 2-digit hexadecimal number
      * @deprecated Unused. This will be removed in Tomcat 10 onwards
      */
     @Deprecated
@@ -369,11 +369,11 @@ public final class UDecoder {
      * Decode and return the specified URL-encoded String. It is assumed the
      * string is not a query string.
      *
-     * @param str The url-encoded string
+     * @param str     The url-encoded string
      * @param charset The character encoding to use; if null, UTF-8 is used.
      * @return the decoded string
-     * @exception IllegalArgumentException if a '%' character is not followed
-     * by a valid 2-digit hexadecimal number
+     * @throws IllegalArgumentException if a '%' character is not followed
+     *                                  by a valid 2-digit hexadecimal number
      */
     public static String URLDecode(String str, Charset charset) {
         if (str == null) {
@@ -420,7 +420,7 @@ public final class UDecoder {
                     osw.flush();
                     if (ix + 2 > len) {
                         throw new IllegalArgumentException(
-                                sm.getString("uDecoder.urlDecode.missingDigit", str));
+                            sm.getString("uDecoder.urlDecode.missingDigit", str));
                     }
                     char c1 = sourceChars[ix++];
                     char c2 = sourceChars[ix++];
@@ -428,7 +428,7 @@ public final class UDecoder {
                         baos.write(x2c(c1, c2));
                     } else {
                         throw new IllegalArgumentException(
-                                sm.getString("uDecoder.urlDecode.missingDigit", str));
+                            sm.getString("uDecoder.urlDecode.missingDigit", str));
                     }
                 } else {
                     osw.append(c);
@@ -439,34 +439,34 @@ public final class UDecoder {
             return baos.toString(charset.name());
         } catch (IOException ioe) {
             throw new IllegalArgumentException(
-                    sm.getString("uDecoder.urlDecode.conversionError", str, charset.name()), ioe);
+                sm.getString("uDecoder.urlDecode.conversionError", str, charset.name()), ioe);
         }
     }
 
 
-    private static boolean isHexDigit( int c ) {
-        return ( ( c>='0' && c<='9' ) ||
-                 ( c>='a' && c<='f' ) ||
-                 ( c>='A' && c<='F' ));
+    private static boolean isHexDigit(int c) {
+        return ((c >= '0' && c <= '9') ||
+            (c >= 'a' && c <= 'f') ||
+            (c >= 'A' && c <= 'F'));
     }
 
 
-    private static int x2c( byte b1, byte b2 ) {
-        int digit= (b1>='A') ? ( (b1 & 0xDF)-'A') + 10 :
-            (b1 -'0');
-        digit*=16;
-        digit +=(b2>='A') ? ( (b2 & 0xDF)-'A') + 10 :
-            (b2 -'0');
+    private static int x2c(byte b1, byte b2) {
+        int digit = (b1 >= 'A') ? ((b1 & 0xDF) - 'A') + 10 :
+            (b1 - '0');
+        digit *= 16;
+        digit += (b2 >= 'A') ? ((b2 & 0xDF) - 'A') + 10 :
+            (b2 - '0');
         return digit;
     }
 
 
-    private static int x2c( char b1, char b2 ) {
-        int digit= (b1>='A') ? ( (b1 & 0xDF)-'A') + 10 :
-            (b1 -'0');
-        digit*=16;
-        digit +=(b2>='A') ? ( (b2 & 0xDF)-'A') + 10 :
-            (b2 -'0');
+    private static int x2c(char b1, char b2) {
+        int digit = (b1 >= 'A') ? ((b1 & 0xDF) - 'A') + 10 :
+            (b1 - '0');
+        digit *= 16;
+        digit += (b2 >= 'A') ? ((b2 & 0xDF) - 'A') + 10 :
+            (b2 - '0');
         return digit;
     }
 }

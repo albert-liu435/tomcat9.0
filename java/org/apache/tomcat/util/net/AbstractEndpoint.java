@@ -90,6 +90,7 @@ public abstract class AbstractEndpoint<S, U> {
 
 
         /**
+         * 根据给定的status处理提供过来的socket
          * Process the provided socket with the given current status.
          *
          * @param socket The socket to process
@@ -981,6 +982,7 @@ public abstract class AbstractEndpoint<S, U> {
 
 
     /**
+     * 用于处理接受到的sockets
      * Handling of accepted sockets.
      */
     private Handler<S> handler = null;
@@ -1274,6 +1276,9 @@ public abstract class AbstractEndpoint<S, U> {
     // ---------------------------------------------- Request processing methods
 
     /**
+     * 从processorCache里面拿一个Processor来处理socket，Processor的实现为SocketProcessor
+     * 将Processor放到工作线程池中执行
+     * <p>
      * Process the given SocketWrapper with the given status. Used to trigger
      * processing as if the Poller (for those endpoints that have one)
      * selected the socket.
@@ -1292,6 +1297,7 @@ public abstract class AbstractEndpoint<S, U> {
             }
             SocketProcessorBase<S> sc = null;
             if (processorCache != null) {
+                //从`processorCache`里面拿一个`Processor`来处理socket，`Processor`的实现为`SocketProcessor`
                 sc = processorCache.pop();
             }
             if (sc == null) {
@@ -1300,6 +1306,10 @@ public abstract class AbstractEndpoint<S, U> {
                 sc.reset(socketWrapper, event);
             }
             Executor executor = getExecutor();
+            //将`Processor`放到工作线程池中执行
+            //dispatch参数表示是否要在另外的线程中处理，上文processKey各处传递的参数都是true
+            //dispatch为true且工作线程池存在时会执行executor.execute(sc)，之后是由工作线程池处理已连接套接字；
+            //否则继续由Poller线程自己处理已连接套接字。
             if (dispatch && executor != null) {
                 executor.execute(sc);
             } else {
@@ -1319,6 +1329,13 @@ public abstract class AbstractEndpoint<S, U> {
     }
 
 
+    /**
+     * 创建SocketProcessor
+     *
+     * @param socketWrapper
+     * @param event
+     * @return
+     */
     protected abstract SocketProcessorBase<S> createSocketProcessor(
         SocketWrapperBase<S> socketWrapper, SocketEvent event);
 
@@ -1605,6 +1622,12 @@ public abstract class AbstractEndpoint<S, U> {
 
     protected abstract U serverSocketAccept() throws Exception;
 
+    /**
+     * setSocketOptions方法接着处理已连接套接字
+     *
+     * @param socket
+     * @return
+     */
     protected abstract boolean setSocketOptions(U socket);
 
     /**

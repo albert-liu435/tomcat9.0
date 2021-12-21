@@ -103,6 +103,7 @@ public final class Response {
 
 
     /**
+     * 动作钩子
      * Action hook.
      */
     volatile ActionHook hook;

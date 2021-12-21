@@ -39,6 +39,8 @@ public interface Service extends Lifecycle {
     // ------------------------------------------------------------- Properties
 
     /**
+     * StandardEngine
+     *
      * @return the <code>Engine</code> that handles requests for all
      * <code>Connectors</code> associated with this Service.
      */

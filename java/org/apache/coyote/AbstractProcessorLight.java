@@ -63,6 +63,7 @@ public abstract class AbstractProcessorLight implements Processor {
                 // Extra write event likely after async, ignore
                 state = SocketState.LONG;
             } else if (status == SocketEvent.OPEN_READ) {
+                // 调用`service()`方法
                 state = service(socketWrapper);
             } else if (status == SocketEvent.CONNECT_FAIL) {
                 logAccess(socketWrapper);
@@ -159,6 +160,9 @@ public abstract class AbstractProcessorLight implements Processor {
 
 
     /**
+     * 生成Request和Response对象
+     * 调用Adapter.service()方法，将生成的Request和Response对象传进去
+     * <p>
      * Service a 'standard' HTTP request. This method is called for both new
      * requests and for requests that have partially read the HTTP request line
      * or HTTP headers. Once the headers have been fully read this method is not

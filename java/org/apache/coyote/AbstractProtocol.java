@@ -151,6 +151,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
     }
 
     /**
+     * 适配器用于处理ProtocolHandler和connector之间的连接
      * The adapter provides the link between the ProtocolHandler and the
      * connector.
      */
@@ -562,6 +563,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
 
 
     /**
+     * 创建一个新的Processor实例
      * Create and configure a new Processor instance for the current protocol
      * implementation.
      *
@@ -691,9 +693,11 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
         }
         //调用`Endpoint.start()`方法
         endpoint.start();
+        //开启定时执行的异步线程
         monitorFuture = getUtilityExecutor().scheduleWithFixedDelay(
             () -> {
                 if (!isPaused()) {
+                    //开启异步超时线程，线程执行单元为`Asynctimeout`
                     startAsyncTimeout();
                 }
             }, 0, 60, TimeUnit.SECONDS);
@@ -836,6 +840,9 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
 
     // ------------------------------------------- Connection handler base class
 
+    /**
+     * @param <S>
+     */
     protected static class ConnectionHandler<S> implements AbstractEndpoint.Handler<S> {
 
         private final AbstractProtocol<S> proto;
@@ -869,6 +876,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
         @SuppressWarnings("deprecation")
         @Override
         public SocketState process(SocketWrapperBase<S> wrapper, SocketEvent status) {
+            //日志
             if (getLog().isDebugEnabled()) {
                 getLog().debug(sm.getString("abstractConnectionHandler.process",
                     wrapper.getSocket(), status));
@@ -971,6 +979,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
 
                 SocketState state = SocketState.CLOSED;
                 do {
+                    //
                     state = processor.process(wrapper, status);
 
                     if (state == SocketState.UPGRADING) {

@@ -19,6 +19,7 @@ package org.apache.tomcat.util.log;
 import org.apache.juli.logging.Log;
 
 /**
+ * 帮助类，跟日志相关
  * This helper class assists with the logging associated with invalid input
  * data. A developer may want all instances of invalid input data logged to
  * assist with debugging whereas in production it is likely to be desirable not
@@ -31,7 +32,7 @@ import org.apache.juli.logging.Log;
  * <li>INFO_ALL: Log all problems at INFO log level.</li>
  * </ul>
  * By default, INFO_THEN_DEBUG is used with a suppression time of 24 hours.
- *
+ * <p>
  * NOTE: This class is not completely thread-safe. When using INFO_THEN_DEBUG it
  * is possible that several INFO messages will be logged before dropping to
  * DEBUG.
@@ -55,7 +56,7 @@ public class UserDataHelper {
 
         Config tempConfig;
         String configString = System.getProperty(
-                "org.apache.juli.logging.UserDataHelper.CONFIG");
+            "org.apache.juli.logging.UserDataHelper.CONFIG");
         if (configString == null) {
             tempConfig = Config.INFO_THEN_DEBUG;
         } else {
@@ -69,8 +70,8 @@ public class UserDataHelper {
 
         // Default suppression time of 1 day.
         suppressionTime = Integer.getInteger(
-                "org.apache.juli.logging.UserDataHelper.SUPPRESSION_TIME",
-                60 * 60 * 24).intValue() * 1000L;
+            "org.apache.juli.logging.UserDataHelper.SUPPRESSION_TIME",
+            60 * 60 * 24).intValue() * 1000L;
 
         if (suppressionTime == 0) {
             tempConfig = Config.INFO_ALL;
