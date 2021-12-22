@@ -35,7 +35,7 @@ import org.apache.tomcat.util.net.ApplicationBufferHandler;
 import org.apache.tomcat.util.net.SocketWrapperBase;
 import org.apache.tomcat.util.res.StringManager;
 
-/**
+/**HTTP的InputBuffer，提供请求头解析和传输编码
  * InputBuffer for HTTP that provides request header parsing as well as transfer
  * encoding.
  */
@@ -130,7 +130,7 @@ public class Http11InputBuffer implements InputBuffer, ApplicationBufferHandler 
      */
     private byte prevChr = 0;
     private byte chr = 0;
-    private volatile boolean parsingRequestLine;
+    private volatile boolean parsingRequestLine;//解析请求行
     private int parsingRequestLinePhase = 0;
     private boolean parsingRequestLineEol = false;
     private int parsingRequestLineStart = 0;
@@ -326,7 +326,7 @@ public class Http11InputBuffer implements InputBuffer, ApplicationBufferHandler 
     }
 
 
-    /**
+    /**阅读请求行。此函数将在HTTP请求头解析期间使用。不要试图使用它读取请求正文
      * Read the request line. This function is meant to be used during the
      * HTTP request header parsing. Do NOT attempt to read the request body
      * using it.
@@ -763,7 +763,7 @@ public class Http11InputBuffer implements InputBuffer, ApplicationBufferHandler 
 
     // --------------------------------------------------------- Private Methods
 
-    /**
+    /**尝试读取数据到inputbuffer中
      * Attempts to read some data into the input buffer.
      *
      * @return <code>true</code> if more data was added to the input buffer

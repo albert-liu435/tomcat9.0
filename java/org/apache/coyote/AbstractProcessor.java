@@ -149,7 +149,7 @@ public abstract class AbstractProcessor extends AbstractProcessorLight implement
     }
 
 
-    /**
+    /**设置被使用的socket包装对象
      * Set the socket wrapper being used.
      *
      * @param socketWrapper The socket wrapper

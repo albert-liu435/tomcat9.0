@@ -207,7 +207,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
         this.clientCertProvider = s;
     }
 
-
+    //最大头数量
     private int maxHeaderCount = 100;
 
     public int getMaxHeaderCount() {
@@ -373,7 +373,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
         return endpoint.getLocalPort();
     }
 
-    /*
+    /*连接超时时间
      * When Tomcat expects data from the client, this is the time Tomcat will
      * wait for that data to arrive before closing the connection.
      */
@@ -514,7 +514,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
 
     // -------------------------------------------------------- Abstract methods
 
-    /**
+    /**具体的实现需要提供对其记录器的访问，以供抽象类使用。
      * Concrete implementations need to provide access to their logger to be
      * used by the abstract classes.
      *
@@ -840,7 +840,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
 
     // ------------------------------------------- Connection handler base class
 
-    /**
+    /**连接处理器
      * @param <S>
      */
     protected static class ConnectionHandler<S> implements AbstractEndpoint.Handler<S> {
@@ -887,7 +887,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
             }
 
             S socket = wrapper.getSocket();
-
+            //获取当前的套接字处理器
             Processor processor = (Processor) wrapper.getCurrentProcessor();
             if (getLog().isDebugEnabled()) {
                 getLog().debug(sm.getString("abstractConnectionHandler.connectionsGet",
@@ -1292,7 +1292,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
             }
         }
     }
-
+    //线程安全的栈
     protected static class RecycledProcessors extends SynchronizedStack<Processor> {
 
         private final transient ConnectionHandler<?> handler;

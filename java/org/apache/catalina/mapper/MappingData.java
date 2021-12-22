@@ -23,7 +23,7 @@ import org.apache.catalina.Host;
 import org.apache.catalina.Wrapper;
 import org.apache.tomcat.util.buf.MessageBytes;
 
-/**
+/**映射数据
  * Mapping data.
  *
  * @author Remy Maucherat

@@ -146,7 +146,7 @@ public final class Request {
     private final ServerCookies serverCookies = new ServerCookies(INITIAL_COOKIE_SIZE);
     //参数实例
     private final Parameters parameters = new Parameters();
-
+    //连接用户
     private final MessageBytes remoteUser = MessageBytes.newInstance();
     private boolean remoteUserNeedsAuthorization = false;
     private final MessageBytes authType = MessageBytes.newInstance();

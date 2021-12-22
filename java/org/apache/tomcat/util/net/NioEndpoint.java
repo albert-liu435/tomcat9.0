@@ -206,7 +206,7 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel, SocketChannel>
         return this.selectorTimeout;
     }
 
-    /**
+    /** socket poller
      * The socket poller.
      */
     private Poller poller = null;
@@ -665,7 +665,7 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel, SocketChannel>
      * Pollor同样实现了Runnable接口，是NioEndpoint类的内部类。在Endpoint的startInterval方法中创建、配置并启动了Pollor线程
      * Poller主要职责是不断轮询其selector，检查准备就绪的socket(有数据可读或可写)，实现io的多路复用。其构造其中初始化了selector。
      * <p>
-     * oller线程主要用于以较少的资源轮询已连接套接字以保持连接，当数据可用时转给工作线程。
+     * Poller线程主要用于以较少的资源轮询已连接套接字以保持连接，当数据可用时转给工作线程。
      * <p>
      * Poller class.
      */
@@ -915,7 +915,7 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel, SocketChannel>
                         processKey(sk, socketWrapper);
                     }
                 }
-
+                //处理超时
                 // Process timeouts
                 timeout(keyCount, hasEvents);
             }
@@ -939,7 +939,7 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel, SocketChannel>
                             processSendfile(sk, socketWrapper, false);
                         } else {
                             unreg(sk, socketWrapper, sk.readyOps());
-                            boolean closeSocket = false;
+                            boolean closeSocket = false;//是否为关闭socket
                             // Read goes before write
                             //处理读事件，比如生成Request对象
                             if (sk.isReadable()) {
@@ -1809,7 +1809,7 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel, SocketChannel>
              * in turn can result in unintentionally closing currently active
              * connections.
              */
-            Poller poller = NioEndpoint.this.poller;
+            Poller poller = NioEndpoint.this.poller; //用于不断的轮询是否有可用的socket
             if (poller == null) {
                 socketWrapper.close();
                 return;
@@ -1821,7 +1821,7 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel, SocketChannel>
                     if (socketWrapper.getSocket().isHandshakeComplete()) {
                         // No TLS handshaking required. Let the handler
                         // process this socket / event combination.
-                        handshake = 0;
+                        handshake = 0;//不需要TLS握手。让处理程序处理此套接字/事件组合
                     } else if (event == SocketEvent.STOP || event == SocketEvent.DISCONNECT ||
                         event == SocketEvent.ERROR) {
                         // Unable to complete the TLS handshake. Treat it as

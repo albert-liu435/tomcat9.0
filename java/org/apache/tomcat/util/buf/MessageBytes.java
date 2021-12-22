@@ -146,7 +146,7 @@ public final class MessageBytes implements Cloneable, Serializable {
         hasLongValue = false;
     }
 
-    /**
+    /**设置内容为字符串
      * Set the content to be a string
      *
      * @param s The string

@@ -25,7 +25,7 @@ import java.util.Objects;
  * @param <S>
  */
 public abstract class SocketProcessorBase<S> implements Runnable {
-
+    //socket的包装类
     protected SocketWrapperBase<S> socketWrapper;
     protected SocketEvent event;
 
@@ -34,6 +34,11 @@ public abstract class SocketProcessorBase<S> implements Runnable {
     }
 
 
+    /**
+     * socketWrapper socket重置
+     * @param socketWrapper
+     * @param event
+     */
     public void reset(SocketWrapperBase<S> socketWrapper, SocketEvent event) {
         Objects.requireNonNull(event);
         this.socketWrapper = socketWrapper;

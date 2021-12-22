@@ -28,7 +28,7 @@ import org.apache.tomcat.util.buf.MessageBytes;
 import org.apache.tomcat.util.net.SocketWrapperBase;
 import org.apache.tomcat.util.res.StringManager;
 
-/**
+/**为HTTP头提供缓冲（允许在提交响应之前重置响应）和到套接字的链接，用于写入头（一旦提交）和响应体。请注意，响应主体的缓冲发生在更高的级别。
  * Provides buffering for the HTTP headers (allowing responses to be reset
  * before they have been committed) and the link to the Socket for writing the
  * headers (once committed) and the response body. Note that buffering of the

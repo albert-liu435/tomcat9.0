@@ -154,7 +154,7 @@ public class SocketProperties {
      */
     protected Integer soLingerTime = null;
 
-    /**
+    /**超时时间
      * SO_TIMEOUT option. default is 20000.
      */
     protected Integer soTimeout = Integer.valueOf(20000);

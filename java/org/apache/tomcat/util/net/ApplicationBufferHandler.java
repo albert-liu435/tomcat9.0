@@ -18,7 +18,7 @@ package org.apache.tomcat.util.net;
 
 import java.nio.ByteBuffer;
 
-/**
+/**回调接口，以便在发生缓冲区溢出异常时扩展缓冲区或替换缓冲区
  * Callback interface to be able to expand buffers when buffer overflow
  * exceptions happen or to replace buffers
  */

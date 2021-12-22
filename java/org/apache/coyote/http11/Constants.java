@@ -101,6 +101,7 @@ public final class Constants {
 
 
     /* Various constant "strings" */
+    //请求头Connection
     public static final String CONNECTION = "Connection";
     public static final String CLOSE = "close";
     /**

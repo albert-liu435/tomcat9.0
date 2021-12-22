@@ -213,7 +213,7 @@ public abstract class AbstractEndpoint<S, U> {
     protected Acceptor<U> acceptor;
 
     /**
-     * SocketProcessor对象的缓存
+     * SocketProcessor对象的缓存，SocketProcessor用来处理socket,SynchronizedStack为一个线程安全的栈
      * Cache for SocketProcessor objects
      */
     protected SynchronizedStack<SocketProcessorBase<S>> processorCache;

@@ -640,7 +640,7 @@ public class Request implements HttpServletRequest {
     }
 
 
-    /**
+    /**Mapping Data数据
      * Mapping data.
      */
     protected final MappingData mappingData = new MappingData();

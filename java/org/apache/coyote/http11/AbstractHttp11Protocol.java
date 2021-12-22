@@ -413,7 +413,7 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
         return compressionConfig.useCompression(request, response);
     }
 
-
+        //模式匹配
     private Pattern restrictedUserAgents = null;
 
     /**

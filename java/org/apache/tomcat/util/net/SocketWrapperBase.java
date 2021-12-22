@@ -45,7 +45,7 @@ public abstract class SocketWrapperBase<E> {
     private static final Log log = LogFactory.getLog(SocketWrapperBase.class);
 
     protected static final StringManager sm = StringManager.getManager(SocketWrapperBase.class);
-
+    //套接字socket对象
     private E socket;
     private final AbstractEndpoint<E, ?> endpoint;
 
@@ -61,7 +61,7 @@ public abstract class SocketWrapperBase<E> {
     private volatile int keepAliveLeft = 100;
     private volatile boolean upgraded = false;
     private boolean secure = false;
-    private String negotiatedProtocol = null;
+    private String negotiatedProtocol = null; //协商协议
 
     /*
      * Following cached for speed / reduced GC
@@ -225,7 +225,7 @@ public abstract class SocketWrapperBase<E> {
         this.negotiatedProtocol = negotiatedProtocol;
     }
 
-    /**
+    /**设置超时时间
      * Set the timeout for reading. Values of zero or less will be changed to
      * -1.
      *

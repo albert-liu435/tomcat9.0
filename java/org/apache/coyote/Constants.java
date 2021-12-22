@@ -32,7 +32,7 @@ public final class Constants {
 
     public static final int MAX_NOTES = 32;
 
-
+    //请求状态码
     // Request states
     public static final int STAGE_NEW = 0;
     public static final int STAGE_PARSE = 1;

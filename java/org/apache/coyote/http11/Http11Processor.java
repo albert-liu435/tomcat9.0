@@ -561,7 +561,7 @@ public class Http11Processor extends AbstractProcessor {
 
 
     private void prepareRequestProtocol() {
-
+        //请求协议
         MessageBytes protocolMB = request.protocol();
         if (protocolMB.equals(Constants.HTTP_11)) {
             http09 = false;
@@ -592,7 +592,7 @@ public class Http11Processor extends AbstractProcessor {
     }
 
 
-    /**
+    /**在读取请求头之后，我们必须设置请求过滤器。
      * After reading the request headers, we have to setup the request filters.
      */
     private void prepareRequest() throws IOException {
@@ -645,7 +645,7 @@ public class Http11Processor extends AbstractProcessor {
             }
         }
 
-
+        //获取请求头的host
         // Check host header
         MessageBytes hostValueMB = null;
         try {
@@ -657,7 +657,7 @@ public class Http11Processor extends AbstractProcessor {
         if (http11 && hostValueMB == null) {
             badRequest("http11processor.request.noHostHeader");
         }
-
+        //URI
         // Check for an absolute-URI less the query string which has already
         // been removed during the parsing of the request line
         ByteChunk uriBC = request.requestURI().getByteChunk();

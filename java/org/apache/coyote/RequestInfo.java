@@ -19,7 +19,7 @@ package org.apache.coyote;
 import javax.management.ObjectName;
 
 
-/**
+/** 持有请求和响应兑现的结构体
  * Structure holding the Request and Response objects. It also holds statistical
  * informations about request processing and provide management informations
  * about the requests being processed.
