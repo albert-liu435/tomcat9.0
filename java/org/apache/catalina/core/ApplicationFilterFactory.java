@@ -26,6 +26,7 @@ import org.apache.catalina.connector.Request;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
 
 /**
+ * 应用过滤器链工厂，用来缓过滤和创建过滤器链
  * Factory for the creation and caching of Filters and creation
  * of Filter Chains.
  *
@@ -40,24 +41,26 @@ public final class ApplicationFilterFactory {
 
 
     /**
+     * 创建过滤器链
      * Construct a FilterChain implementation that will wrap the execution of
      * the specified servlet instance.
      *
      * @param request The servlet request we are processing
      * @param wrapper The wrapper managing the servlet instance
      * @param servlet The servlet instance to be wrapped
-     *
      * @return The configured FilterChain instance or null if none is to be
-     *         executed.
+     * executed.
      */
     public static ApplicationFilterChain createFilterChain(ServletRequest request,
-            Wrapper wrapper, Servlet servlet) {
+                                                           Wrapper wrapper, Servlet servlet) {
 
         // If there is no servlet to execute, return null
         if (servlet == null) {
             return null;
         }
 
+        // 1. 如果加密打开了，则可能会多次调用这个方法
+        // 2. 为了避免重复生成filterChain对象，所以会将filterChain对象放在Request里面进行缓存
         // Create and initialize a filter chain object
         ApplicationFilterChain filterChain = null;
         if (request instanceof Request) {
@@ -82,6 +85,7 @@ public final class ApplicationFilterFactory {
 
         // Acquire the filter mappings for this Context
         StandardContext context = (StandardContext) wrapper.getParent();
+        // 从这儿看出过滤器链对象里面的元素是根据Context里面的filterMaps来生成的
         FilterMap filterMaps[] = context.findFilterMaps();
 
         // If there are no filter mappings, we are done
@@ -91,17 +95,18 @@ public final class ApplicationFilterFactory {
 
         // Acquire the information we will need to match filter mappings
         DispatcherType dispatcher =
-                (DispatcherType) request.getAttribute(Globals.DISPATCHER_TYPE_ATTR);
+            (DispatcherType) request.getAttribute(Globals.DISPATCHER_TYPE_ATTR);
 
         String requestPath = null;
         Object attribute = request.getAttribute(Globals.DISPATCHER_REQUEST_PATH_ATTR);
-        if (attribute != null){
+        if (attribute != null) {
             requestPath = attribute.toString();
         }
 
         String servletName = wrapper.getName();
 
         // Add the relevant path-mapped filters to this filter chain
+        // 类型和路径都匹配的情况下，将context.filterConfig放到过滤器链里面
         for (FilterMap filterMap : filterMaps) {
             if (!matchDispatcher(filterMap, dispatcher)) {
                 continue;
@@ -110,7 +115,7 @@ public final class ApplicationFilterFactory {
                 continue;
             }
             ApplicationFilterConfig filterConfig = (ApplicationFilterConfig)
-                    context.findFilterConfig(filterMap.getFilterName());
+                context.findFilterConfig(filterMap.getFilterName());
             if (filterConfig == null) {
                 // FIXME - log configuration problem
                 continue;
@@ -119,6 +124,7 @@ public final class ApplicationFilterFactory {
         }
 
         // Add filters that match on servlet name second
+        // 类型和servlet名称都匹配的情况下，将context.filterConfig放到过滤器链里面
         for (FilterMap filterMap : filterMaps) {
             if (!matchDispatcher(filterMap, dispatcher)) {
                 continue;
@@ -127,7 +133,7 @@ public final class ApplicationFilterFactory {
                 continue;
             }
             ApplicationFilterConfig filterConfig = (ApplicationFilterConfig)
-                    context.findFilterConfig(filterMap.getFilterName());
+                context.findFilterConfig(filterMap.getFilterName());
             if (filterConfig == null) {
                 // FIXME - log configuration problem
                 continue;
@@ -148,7 +154,7 @@ public final class ApplicationFilterFactory {
      * matches the requirements of the specified filter mapping;
      * otherwise, return <code>false</code>.
      *
-     * @param filterMap Filter mapping being checked
+     * @param filterMap   Filter mapping being checked
      * @param requestPath Context-relative request path of this request
      */
     private static boolean matchFiltersURL(FilterMap filterMap, String requestPath) {
@@ -183,7 +189,7 @@ public final class ApplicationFilterFactory {
      * matches the requirements of the specified filter mapping;
      * otherwise, return <code>false</code>.
      *
-     * @param testPath URL mapping being checked
+     * @param testPath    URL mapping being checked
      * @param requestPath Context-relative request path of this request
      */
     private static boolean matchFiltersURL(String testPath, String requestPath) {
@@ -203,7 +209,7 @@ public final class ApplicationFilterFactory {
         }
         if (testPath.endsWith("/*")) {
             if (testPath.regionMatches(0, requestPath, 0,
-                                       testPath.length() - 2)) {
+                testPath.length() - 2)) {
                 if (requestPath.length() == (testPath.length() - 2)) {
                     return true;
                 } else if ('/' == requestPath.charAt(testPath.length() - 2)) {
@@ -220,9 +226,9 @@ public final class ApplicationFilterFactory {
             if ((slash >= 0) && (period > slash)
                 && (period != requestPath.length() - 1)
                 && ((requestPath.length() - period)
-                    == (testPath.length() - 1))) {
+                == (testPath.length() - 1))) {
                 return testPath.regionMatches(2, requestPath, period + 1,
-                                               testPath.length() - 2);
+                    testPath.length() - 2);
             }
         }
 
@@ -237,11 +243,11 @@ public final class ApplicationFilterFactory {
      * the requirements of the specified filter mapping; otherwise
      * return <code>false</code>.
      *
-     * @param filterMap Filter mapping being checked
+     * @param filterMap   Filter mapping being checked
      * @param servletName Servlet name being checked
      */
     private static boolean matchFiltersServlet(FilterMap filterMap,
-                                        String servletName) {
+                                               String servletName) {
 
         if (servletName == null) {
             return false;
@@ -268,27 +274,27 @@ public final class ApplicationFilterFactory {
      */
     private static boolean matchDispatcher(FilterMap filterMap, DispatcherType type) {
         switch (type) {
-            case FORWARD :
+            case FORWARD:
                 if ((filterMap.getDispatcherMapping() & FilterMap.FORWARD) != 0) {
                     return true;
                 }
                 break;
-            case INCLUDE :
+            case INCLUDE:
                 if ((filterMap.getDispatcherMapping() & FilterMap.INCLUDE) != 0) {
                     return true;
                 }
                 break;
-            case REQUEST :
+            case REQUEST:
                 if ((filterMap.getDispatcherMapping() & FilterMap.REQUEST) != 0) {
                     return true;
                 }
                 break;
-            case ERROR :
+            case ERROR:
                 if ((filterMap.getDispatcherMapping() & FilterMap.ERROR) != 0) {
                     return true;
                 }
                 break;
-            case ASYNC :
+            case ASYNC:
                 if ((filterMap.getDispatcherMapping() & FilterMap.ASYNC) != 0) {
                     return true;
                 }

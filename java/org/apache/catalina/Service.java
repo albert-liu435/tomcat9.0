@@ -20,7 +20,9 @@ import org.apache.catalina.connector.Connector;
 import org.apache.catalina.mapper.Mapper;
 
 /**
+ * 表示服务，Server可以运行多个服务。比如一个Tomcat里面可运行订单服务、支付服务、用户服务等等
  * 一个Service负责维护多个Connector和一个Container,这样来自Connector的请求只能由它所属的Service维护的Container处理
+ * 因为每个服务允许同时支持多种协议，但是每种协议最终执行的Servlet却是相同的
  * <p>
  * 在一个Tomcat实例内可以包含任意多个Service实例，她们彼此独立。
  * A <strong>Service</strong> is a group of one or more
@@ -39,7 +41,7 @@ public interface Service extends Lifecycle {
     // ------------------------------------------------------------- Properties
 
     /**
-     * StandardEngine
+     * 这里表示StandardEngine
      *
      * @return the <code>Engine</code> that handles requests for all
      * <code>Connectors</code> associated with this Service.

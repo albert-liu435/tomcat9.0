@@ -917,6 +917,7 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
     @Override
     protected void startInternal() throws LifecycleException {
 
+        //发出configure_start事件
         fireLifecycleEvent(CONFIGURE_START_EVENT, null);
         setState(LifecycleState.STARTING);
 
@@ -924,6 +925,11 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
 
         // Start our defined Services
         synchronized (servicesLock) {
+
+//            StandardService的start代码如下所示：
+//            1. 启动Engine，Engine的child容器都会被启动，webapp的部署会在这个步骤完成；
+//            2. 启动Executor，这是tomcat用Lifecycle封装的线程池，继承至java.util.concurrent.Executor以及tomcat的Lifecycle接口
+//            3. 启动Connector组件，由Connector完成Endpoint的启动，这个时候意味着tomcat可以对外提供请求服务了
             for (Service service : services) {
                 service.start();
             }

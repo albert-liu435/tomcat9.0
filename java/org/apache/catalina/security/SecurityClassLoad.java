@@ -27,6 +27,12 @@ package org.apache.catalina.security;
  */
 public final class SecurityClassLoad {
 
+    /**
+     * 其实就是使用catalinaLoader加载tomcat源代码里面的各个专用类
+     *
+     * @param loader
+     * @throws Exception
+     */
     public static void securityClassLoad(ClassLoader loader) throws Exception {
         securityClassLoad(loader, true);
     }

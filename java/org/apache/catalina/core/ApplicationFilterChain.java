@@ -36,6 +36,7 @@ import org.apache.tomcat.util.ExceptionUtils;
 import org.apache.tomcat.util.res.StringManager;
 
 /**
+ * 应用过滤器链
  * Implementation of <code>javax.servlet.FilterChain</code> used to manage
  * the execution of a set of filters for a particular request.  When the
  * set of defined filters has all been executed, the next call to
@@ -122,31 +123,31 @@ public final class ApplicationFilterChain implements FilterChain {
     // ---------------------------------------------------- FilterChain Methods
 
     /**
+     * 执行过滤器链中个过滤器的过滤方法
      * Invoke the next filter in this chain, passing the specified request
      * and response.  If there are no more filters in this chain, invoke
      * the <code>service()</code> method of the servlet itself.
      *
-     * @param request The servlet request we are processing
+     * @param request  The servlet request we are processing
      * @param response The servlet response we are creating
-     *
-     * @exception IOException if an input/output error occurs
-     * @exception ServletException if a servlet exception occurs
+     * @throws IOException      if an input/output error occurs
+     * @throws ServletException if a servlet exception occurs
      */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response)
         throws IOException, ServletException {
 
-        if( Globals.IS_SECURITY_ENABLED ) {
+        if (Globals.IS_SECURITY_ENABLED) {
             final ServletRequest req = request;
             final ServletResponse res = response;
             try {
                 java.security.AccessController.doPrivileged(
-                        (java.security.PrivilegedExceptionAction<Void>) () -> {
-                            internalDoFilter(req,res);
-                            return null;
-                        }
+                    (java.security.PrivilegedExceptionAction<Void>) () -> {
+                        internalDoFilter(req, res);
+                        return null;
+                    }
                 );
-            } catch( PrivilegedActionException pe) {
+            } catch (PrivilegedActionException pe) {
                 Exception e = pe.getException();
                 if (e instanceof ServletException) {
                     throw (ServletException) e;
@@ -159,33 +160,42 @@ public final class ApplicationFilterChain implements FilterChain {
                 }
             }
         } else {
-            internalDoFilter(request,response);
+            internalDoFilter(request, response);
         }
     }
 
+    // 1. `internalDoFilter`方法通过pos和n来调用过滤器链里面的每个过滤器。pos表示当前的过滤器下标，n表示总的过滤器数量
+// 2. `internalDoFilter`方法最终会调用servlet.service()方法
     private void internalDoFilter(ServletRequest request,
                                   ServletResponse response)
         throws IOException, ServletException {
 
         // Call the next filter if there is one
+        // 1. 当pos小于n时, 则执行Filter
         if (pos < n) {
+            // 2. 得到 过滤器 Filter，执行一次post++
             ApplicationFilterConfig filterConfig = filters[pos++];
             try {
                 Filter filter = filterConfig.getFilter();
 
                 if (request.isAsyncSupported() && "false".equalsIgnoreCase(
-                        filterConfig.getFilterDef().getAsyncSupported())) {
+                    filterConfig.getFilterDef().getAsyncSupported())) {
                     request.setAttribute(Globals.ASYNC_SUPPORTED_ATTR, Boolean.FALSE);
                 }
-                if( Globals.IS_SECURITY_ENABLED ) {
+                if (Globals.IS_SECURITY_ENABLED) {
                     final ServletRequest req = request;
                     final ServletResponse res = response;
                     Principal principal =
                         ((HttpServletRequest) req).getUserPrincipal();
 
                     Object[] args = new Object[]{req, res, this};
-                    SecurityUtil.doAsPrivilege ("doFilter", filter, classType, args, principal);
+                    SecurityUtil.doAsPrivilege("doFilter", filter, classType, args, principal);
                 } else {
+                    // 4. 这里的 filter 的执行 有点递归的感觉, 通过 pos 来控制从 filterChain 里面拿出那个 filter 来进行操作
+                    // 这里把this（filterChain）传到自定义filter里面，我们自定义的filter，会重写doFilter，在这里会被调用，doFilter里面会执行业务逻辑，
+                    // 如果执行业务逻辑成功，则会调用 filterChain.doFilter(servletRequest, servletResponse); ，filterChain就是这里传过去的this；
+                    // 如果业务逻辑执行失败，则return，filterChain终止，后面的servlet.service(request, response)也不会执行了
+                    // 所以在 Filter 里面所调用 return, 则会终止 Filter 的调用, 而下面的 Servlet.service 更本就没有调用到
                     filter.doFilter(request, response, this);
                 }
             } catch (IOException | ServletException | RuntimeException e) {
@@ -207,23 +217,24 @@ public final class ApplicationFilterChain implements FilterChain {
 
             if (request.isAsyncSupported() && !servletSupportsAsync) {
                 request.setAttribute(Globals.ASYNC_SUPPORTED_ATTR,
-                        Boolean.FALSE);
+                    Boolean.FALSE);
             }
             // Use potentially wrapped request from this point
             if ((request instanceof HttpServletRequest) &&
-                    (response instanceof HttpServletResponse) &&
-                    Globals.IS_SECURITY_ENABLED ) {
+                (response instanceof HttpServletResponse) &&
+                Globals.IS_SECURITY_ENABLED) {
                 final ServletRequest req = request;
                 final ServletResponse res = response;
                 Principal principal =
                     ((HttpServletRequest) req).getUserPrincipal();
                 Object[] args = new Object[]{req, res};
                 SecurityUtil.doAsPrivilege("service",
-                                           servlet,
-                                           classTypeUsedInService,
-                                           args,
-                                           principal);
+                    servlet,
+                    classTypeUsedInService,
+                    args,
+                    principal);
             } else {
+                //当pos等于n时，过滤器都执行完毕，终于执行了熟悉的servlet.service(request, response)方法。
                 servlet.service(request, response);
             }
         } catch (IOException | ServletException | RuntimeException e) {
@@ -273,8 +284,8 @@ public final class ApplicationFilterChain implements FilterChain {
     void addFilter(ApplicationFilterConfig filterConfig) {
 
         // Prevent the same filter being added multiple times
-        for(ApplicationFilterConfig filter:filters) {
-            if(filter==filterConfig) {
+        for (ApplicationFilterConfig filter : filters) {
+            if (filter == filterConfig) {
                 return;
             }
         }
@@ -336,7 +347,7 @@ public final class ApplicationFilterChain implements FilterChain {
      *               be added
      */
     public void findNonAsyncFilters(Set<String> result) {
-        for (int i = 0; i < n ; i++) {
+        for (int i = 0; i < n; i++) {
             ApplicationFilterConfig filter = filters[i];
             if ("false".equalsIgnoreCase(filter.getFilterDef().getAsyncSupported())) {
                 result.add(filter.getFilterClass());

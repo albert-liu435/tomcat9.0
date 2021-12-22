@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 public interface CookieProcessor {
 
     /**
+     * 解析提供的headers信息为server的cookie对象
      * Parse the provided headers into server cookie objects.
      *
      * @param headers       The HTTP headers to parse
@@ -75,6 +76,7 @@ public interface CookieProcessor {
     }
 
     /**
+     * 获取character
      * Obtain the character set that will be used when converting between bytes
      * and characters when parsing and/or generating HTTP headers for cookies.
      *

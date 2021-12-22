@@ -19,8 +19,10 @@ package org.apache.catalina;
 import java.util.Set;
 
 /**
+ * Pipeline作为一个管道，我们可以简单认为是一个Valve的集合，内部会对这个集合进行遍历，调用每个元素的业务逻辑方法invoke()。
+ * <p>
  * Pipeline用于构造职责链,Valve代表职责链上的每个处理器。
- *
+ * <p>
  * Pipeline中维护了一个基础的Valve，它始终位于Pipeline的末端(即最后执行).封装了具体的请求处理和输出响应的过程。然后通过addValve()
  * 方法，我们可以为Pipeline添加其他的Valve。后添加的Valve位于基础Valve之前，并按照添加顺序执行。Pipeline通过获得首个Valve来启动整个链条的执行。
  *
@@ -44,6 +46,8 @@ import java.util.Set;
 public interface Pipeline extends Contained {
 
     /**
+     * 获取基本阀门
+     *
      * @return the Valve instance that has been distinguished as the basic
      * Valve for this Pipeline (if any).
      */
@@ -51,6 +55,7 @@ public interface Pipeline extends Contained {
 
 
     /**
+     * 设置基本阀门
      * <p>Set the Valve instance that has been distinguished as the basic
      * Valve for this Pipeline (if any).  Prior to setting the basic Valve,
      * the Valve's <code>setContainer()</code> will be called, if it
@@ -66,6 +71,7 @@ public interface Pipeline extends Contained {
 
 
     /**
+     * 添加阀门
      * <p>Add a new Valve to the end of the pipeline associated with this
      * Container.  Prior to adding the Valve, the Valve's
      * <code>setContainer()</code> method will be called, if it implements
@@ -80,18 +86,19 @@ public interface Pipeline extends Contained {
      * call is successful.</p>
      *
      * @param valve Valve to be added
-     *
-     * @exception IllegalArgumentException if this Container refused to
-     *  accept the specified Valve
-     * @exception IllegalArgumentException if the specified Valve refuses to be
-     *  associated with this Container
-     * @exception IllegalStateException if the specified Valve is already
-     *  associated with a different Container
+     * @throws IllegalArgumentException if this Container refused to
+     *                                  accept the specified Valve
+     * @throws IllegalArgumentException if the specified Valve refuses to be
+     *                                  associated with this Container
+     * @throws IllegalStateException    if the specified Valve is already
+     *                                  associated with a different Container
      */
     public void addValve(Valve valve);
 
 
     /**
+     * 获取阀门数组
+     *
      * @return the set of Valves in the pipeline associated with this
      * Container, including the basic Valve (if any).  If there are no
      * such Valves, a zero-length array is returned.
@@ -100,6 +107,7 @@ public interface Pipeline extends Contained {
 
 
     /**
+     * 删除阀门
      * Remove the specified Valve from the pipeline associated with this
      * Container, if it is found; otherwise, do nothing.  If the Valve is
      * found and removed, the Valve's <code>setContainer(null)</code> method
@@ -115,6 +123,8 @@ public interface Pipeline extends Contained {
 
 
     /**
+     * 获取首个阀门
+     *
      * @return the Valve instance that has been distinguished as the basic
      * Valve for this Pipeline (if any).
      */
@@ -122,13 +132,16 @@ public interface Pipeline extends Contained {
 
 
     /**
+     * 管道内所有阀门是否异步执行
      * Returns true if all the valves in this pipeline support async, false otherwise
+     *
      * @return true if all the valves in this pipeline support async, false otherwise
      */
     public boolean isAsyncSupported();
 
 
     /**
+     * 查找非异步执行的所有阀门，并放置到result参数中，所以result不允许为null
      * Identifies the Valves, if any, in this Pipeline that do not support
      * async.
      *

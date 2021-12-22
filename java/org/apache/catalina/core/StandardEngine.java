@@ -44,6 +44,14 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
 /**
+ * 标准的Engine
+ * StandardEngine、StandardHost、StandardContext、StandardWrapper各个容器存在父子关系，一个父容器包含多个子容器，
+ * 并且一个子容器对应一个父容器。Engine是顶层父容器，它不存在父容器。各个组件的包含关系如下图所示，默认情况下，StandardEngine只有一个子容器StandardHost，
+ * 一个StandardContext对应一个webapp应用，而一个StandardWrapper对应一个webapp里面的一个 Servlet
+ *
+ * StandardEngine、StandardHost、StandardContext、StandardWrapper都是继承至ContainerBase，各个容器的启动，都是由父容器调用子容器的start方法，也就是说由StandardEngine启动StandardHost，再StandardHost启动StandardContext，以此类推。
+ *
+ * 由于它们都是继续至ContainerBase，当调用 start 启动Container容器时，首先会执行 ContainerBase 的 start 方法，它会寻找子容器，并且在线程池中启动子容器，StandardEngine也不例外。
  * Standard implementation of the <b>Engine</b> interface.  Each
  * child container must be a Host implementation to process the specific
  * fully qualified host name of that virtual host. <br>
@@ -64,11 +72,12 @@ public class StandardEngine extends ContainerBase implements Engine {
     public StandardEngine() {
 
         super();
+        //为自己的Pipeline添加了基本阀StandardEngineValve
         pipeline.setBasic(new StandardEngineValve());
         /* Set the jmvRoute using the system property jvmRoute */
         try {
             setJvmRoute(System.getProperty("jvmRoute"));
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             log.warn(sm.getString("standardEngine.jvmRouteFail"));
         }
         // By default, the engine will hold the reloading thread
@@ -153,7 +162,7 @@ public class StandardEngine extends ContainerBase implements Engine {
             service.getMapper().setDefaultHostName(host);
         }
         support.firePropertyChange("defaultHost", oldDefaultHost,
-                                   this.defaultHost);
+            this.defaultHost);
 
     }
 
@@ -248,8 +257,8 @@ public class StandardEngine extends ContainerBase implements Engine {
      * Start this component and implement the requirements
      * of {@link org.apache.catalina.util.LifecycleBase#startInternal()}.
      *
-     * @exception LifecycleException if this component detects a fatal error
-     *  that prevents this component from being used
+     * @throws LifecycleException if this component detects a fatal error
+     *                            that prevents this component from being used
      */
     @Override
     protected synchronized void startInternal() throws LifecycleException {
@@ -272,7 +281,7 @@ public class StandardEngine extends ContainerBase implements Engine {
      */
     @Override
     public void logAccess(Request request, Response response, long time,
-            boolean useDefault) {
+                          boolean useDefault) {
 
         boolean logged = false;
 
@@ -293,22 +302,22 @@ public class StandardEngine extends ContainerBase implements Engine {
 
                     if (newDefaultAccessLog != null) {
                         if (defaultAccessLog.compareAndSet(null,
-                                newDefaultAccessLog)) {
+                            newDefaultAccessLog)) {
                             AccessLogListener l = new AccessLogListener(this,
-                                    host, null);
+                                host, null);
                             l.install();
                         }
                     } else {
                         // Try the ROOT context of default host
                         context = (Context) host.findChild("");
                         if (context != null &&
-                                context.getState().isAvailable()) {
+                            context.getState().isAvailable()) {
                             newDefaultAccessLog = context.getAccessLog();
                             if (newDefaultAccessLog != null) {
                                 if (defaultAccessLog.compareAndSet(null,
-                                        newDefaultAccessLog)) {
+                                    newDefaultAccessLog)) {
                                     AccessLogListener l = new AccessLogListener(
-                                            this, null, context);
+                                        this, null, context);
                                     l.install();
                                 }
                             }
@@ -319,9 +328,9 @@ public class StandardEngine extends ContainerBase implements Engine {
                 if (newDefaultAccessLog == null) {
                     newDefaultAccessLog = new NoopAccessLog();
                     if (defaultAccessLog.compareAndSet(null,
-                            newDefaultAccessLog)) {
+                        newDefaultAccessLog)) {
                         AccessLogListener l = new AccessLogListener(this, host,
-                                context);
+                            context);
                         l.install();
                     }
                 }
@@ -403,7 +412,7 @@ public class StandardEngine extends ContainerBase implements Engine {
 
         @Override
         public void setRequestAttributesEnabled(
-                boolean requestAttributesEnabled) {
+            boolean requestAttributesEnabled) {
             // NOOP
 
         }
@@ -416,8 +425,8 @@ public class StandardEngine extends ContainerBase implements Engine {
     }
 
     protected static final class AccessLogListener
-            implements PropertyChangeListener, LifecycleListener,
-            ContainerListener {
+        implements PropertyChangeListener, LifecycleListener,
+        ContainerListener {
 
         private final StandardEngine engine;
         private final Host host;
@@ -425,7 +434,7 @@ public class StandardEngine extends ContainerBase implements Engine {
         private volatile boolean disabled = false;
 
         public AccessLogListener(StandardEngine engine, Host host,
-                Context context) {
+                                 Context context) {
             this.engine = engine;
             this.host = host;
             this.context = context;
@@ -462,8 +471,8 @@ public class StandardEngine extends ContainerBase implements Engine {
 
             String type = event.getType();
             if (Lifecycle.AFTER_START_EVENT.equals(type) ||
-                    Lifecycle.BEFORE_STOP_EVENT.equals(type) ||
-                    Lifecycle.BEFORE_DESTROY_EVENT.equals(type)) {
+                Lifecycle.BEFORE_STOP_EVENT.equals(type) ||
+                Lifecycle.BEFORE_DESTROY_EVENT.equals(type)) {
                 // Container is being started/stopped/removed
                 // Force re-calculation and disable listener since it won't
                 // be re-used

@@ -17,6 +17,7 @@
 package org.apache.catalina.session;
 
 /**
+ * 会话长时间空闲时，将会把 Session 信息写入磁盘，从而限制内存中的活动会话数量；此外，它还支持容错，会定期将内存中的 Session 信息备份到磁盘
  * Implementation of the <b>Manager</b> interface that makes use of
  * a Store to swap active Sessions to disk. It can be configured to
  * achieve several different goals:
@@ -47,5 +48,5 @@ public final class PersistentManager extends PersistentManagerBase {
     public String getName() {
         return name;
     }
- }
+}
 

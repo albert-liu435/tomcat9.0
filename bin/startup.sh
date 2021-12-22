@@ -37,7 +37,7 @@ while [ -h "$PRG" ] ; do
     PRG=`dirname "$PRG"`/"$link"
   fi
 done
-
+#PRGDIR表示当前脚本所在的路径
 PRGDIR=`dirname "$PRG"`
 EXECUTABLE=catalina.sh
 
@@ -56,5 +56,6 @@ else
     exit 1
   fi
 fi
-
+#EXECUTABLE：catalina.sh 脚本名称
+#表示执行了脚本catalina.sh，参数是start
 exec "$PRGDIR"/"$EXECUTABLE" start "$@"

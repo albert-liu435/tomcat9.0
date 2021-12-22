@@ -46,6 +46,9 @@ import org.apache.tomcat.util.ExceptionUtils;
 
 /**
  * 标准的管理器，为管理器指定会话存储方式和会话标识生成器
+ * <p>
+ * Manager 默认实现，在内存中管理 session，宕机将导致 session 丢失；但是当调用 Lifecycle 的 start/stop 接口时，将采用 jdk 序列化保存 Session 信息，
+ * 因此当 tomcat 发现某个应用的文件有变更进行 reload 操作时，这种情况下不会丢失 Session 信息
  * Standard implementation of the <b>Manager</b> interface that provides
  * simple session persistence across restarts of this component (such as
  * when the entire server is shut down and restarted, or when a particular

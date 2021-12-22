@@ -436,6 +436,7 @@ public class StandardService extends LifecycleMBeanBase implements Service {
         }
         setState(LifecycleState.STARTING);
 
+        //启动engine
         // Start our defined Container first
         if (engine != null) {
             synchronized (engine) {
@@ -443,14 +444,17 @@ public class StandardService extends LifecycleMBeanBase implements Service {
             }
         }
 
+        // 启动Executor线程池
         synchronized (executors) {
             for (Executor executor : executors) {
                 executor.start();
             }
         }
 
+        // 启动MapperListener
         mapperListener.start();
 
+        // 启动Connector
         // Start our defined Connectors second
         synchronized (connectorsLock) {
             for (Connector connector : connectors) {
@@ -536,7 +540,8 @@ public class StandardService extends LifecycleMBeanBase implements Service {
     }
 
 
-    /**调用启动前初始化。这用于允许连接器绑定到Unix操作环境下的受限端口。
+    /**
+     * 调用启动前初始化。这用于允许连接器绑定到Unix操作环境下的受限端口。
      * Invoke a pre-startup initialization. This is used to allow connectors
      * to bind to restricted ports under Unix operating environments.
      */

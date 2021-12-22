@@ -136,6 +136,7 @@ public class Connector extends LifecycleMBeanBase {
     // ----------------------------------------------------- Instance Variables
 
     /**
+     * 这里表示是StandardService
      * The <code>Service</code> we are associated with (if any).
      */
     protected Service service = null;

@@ -23,6 +23,7 @@ import org.apache.catalina.deploy.NamingResourcesImpl;
 import org.apache.catalina.startup.Catalina;
 
 /**
+ * 表示服务器，提供了一种优雅的方式来启动和停止整个系统，不必单独启停连接器和容器
  * 表示整个Servlet容器，因此Tomcat运行环境中只有唯一一个Server实例
  * A <code>Server</code> element represents the entire Catalina
  * servlet container.  Its attributes represent the characteristics of

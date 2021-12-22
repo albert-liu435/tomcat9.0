@@ -27,9 +27,15 @@ import org.apache.juli.logging.Log;
 
 
 /**
+ * 表示容器，可以看做Servlet容器
+ * <p>
  * 负责具体的请求的处理
  * Container用于处理从客户端获取的请求信息，并根据请求信息返回响应信息。
- * Container表示能够执行客户端请求并返回响应的一类对象，在tomcat中包括 Enginer、Host、Context、Wrapper
+ * Container表示能够执行客户端请求并返回响应的一类对象，在tomcat中包括
+ * Enginer 引擎、
+ * Host主机、
+ * Context上下文、
+ * Wrapper包装器
  * <p>
  * A <b>Container</b> is an object that can execute requests received from
  * a client, and return responses based on those requests.  A Container may
@@ -161,7 +167,7 @@ public interface Container extends Lifecycle {
 
 
     /**
-     * StandardPipeline
+     * 这里表示StandardPipeline
      * Return the Pipeline object that manages the Valves associated with
      * this Container.
      *

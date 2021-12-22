@@ -20,6 +20,10 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
 /**
+ * session 的创建、销毁由 Manager 组件完成，它内部维护了 N 个 Session 实例对象
+ * <p>
+ * StandardContext，它与 Manager 是一对一的关系，Manager 创建、销毁会话时，需要借助 StandardContext 获取 HttpSessionListener 列表并进行事件通知，
+ * 而 StandardContext 的后台线程会对 Manager 进行过期 Session 的清理工作
  * A <b>Manager</b> manages the pool of Sessions that are associated with a
  * particular Context. Different Manager implementations may support
  * value-added features such as the persistent storage of session data,
@@ -106,7 +110,7 @@ public interface Manager {
      * same time.
      *
      * @param maxActive Maximum number of sessions that have been active at
-     * the same time.
+     *                  the same time.
      */
     public void setMaxActive(int maxActive);
 
@@ -159,7 +163,7 @@ public interface Manager {
      * alive.
      *
      * @param sessionMaxAliveTime Longest time (in seconds) that an expired
-     * session had been alive.
+     *                            session had been alive.
      */
     public void setSessionMaxAliveTime(int sessionMaxAliveTime);
 
@@ -178,7 +182,7 @@ public interface Manager {
      * Gets the current rate of session creation (in session per minute). This
      * may be based on sample data.
      *
-     * @return  The current rate (in sessions per minute) of session creation
+     * @return The current rate (in sessions per minute) of session creation
      */
     public int getSessionCreateRate();
 
@@ -187,7 +191,7 @@ public interface Manager {
      * Gets the current rate of session expiration (in session per minute). This
      * may be based on sample data
      *
-     * @return  The current rate (in sessions per minute) of session expiration
+     * @return The current rate (in sessions per minute) of session expiration
      */
     public int getSessionExpireRate();
 
@@ -214,10 +218,9 @@ public interface Manager {
      * Change the session ID of the current session to a new randomly generated
      * session ID.
      *
-     * @param session   The session to change the session ID for
-     *
+     * @param session The session to change the session ID for
      * @deprecated Use {@link #rotateSessionId(Session)}.
-     *             Will be removed in Tomcat 10
+     * Will be removed in Tomcat 10
      */
     @Deprecated
     public void changeSessionId(Session session);
@@ -227,9 +230,8 @@ public interface Manager {
      * Change the session ID of the current session to a new randomly generated
      * session ID.
      *
-     * @param session   The session to change the session ID for
-     *
-     * @return  The new session ID
+     * @param session The session to change the session ID for
+     * @return The new session ID
      */
     public default String rotateSessionId(Session session) {
         String newSessionId = null;
@@ -255,7 +257,7 @@ public interface Manager {
     /**
      * Change the session ID of the current session to a specified session ID.
      *
-     * @param session   The session to change the session ID for
+     * @param session The session to change the session ID for
      * @param newId   new session ID
      */
     public void changeSessionId(Session session, String newId);
@@ -279,14 +281,13 @@ public interface Manager {
      * <code>null</code>.
      *
      * @param sessionId The session id which should be used to create the
-     *  new session; if <code>null</code>, the session
-     *  id will be assigned by this method, and available via the getId()
-     *  method of the returned session.
-     * @exception IllegalStateException if a new session cannot be
-     *  instantiated for any reason
-     *
+     *                  new session; if <code>null</code>, the session
+     *                  id will be assigned by this method, and available via the getId()
+     *                  method of the returned session.
      * @return An empty Session object with the given ID or a newly created
-     *         session ID if none was specified
+     * session ID if none was specified
+     * @throws IllegalStateException if a new session cannot be
+     *                               instantiated for any reason
      */
     public Session createSession(String sessionId);
 
@@ -296,14 +297,12 @@ public interface Manager {
      * specified session id (if any); otherwise return <code>null</code>.
      *
      * @param id The session id for the session to be returned
-     *
-     * @exception IllegalStateException if a new session cannot be
-     *  instantiated for any reason
-     * @exception IOException if an input/output error occurs while
-     *  processing this request
-     *
      * @return the request session or {@code null} if a session with the
-     *         requested ID could not be found
+     * requested ID could not be found
+     * @throws IllegalStateException if a new session cannot be
+     *                               instantiated for any reason
+     * @throws IOException           if an input/output error occurs while
+     *                               processing this request
      */
     public Session findSession(String id) throws IOException;
 
@@ -322,9 +321,9 @@ public interface Manager {
      * to the appropriate persistence mechanism, if any.  If persistence is not
      * supported, this method returns without doing anything.
      *
-     * @exception ClassNotFoundException if a serialized class cannot be
-     *  found during the reload
-     * @exception IOException if an input/output error occurs
+     * @throws ClassNotFoundException if a serialized class cannot be
+     *                                found during the reload
+     * @throws IOException            if an input/output error occurs
      */
     public void load() throws ClassNotFoundException, IOException;
 
@@ -340,8 +339,8 @@ public interface Manager {
     /**
      * Remove this Session from the active Sessions for this Manager.
      *
-     * @param session   Session to be removed
-     * @param update    Should the expiration statistics be updated
+     * @param session Session to be removed
+     * @param update  Should the expiration statistics be updated
      */
     public void remove(Session session, boolean update);
 
@@ -359,7 +358,7 @@ public interface Manager {
      * mechanism, if any.  If persistence is not supported, this method
      * returns without doing anything.
      *
-     * @exception IOException if an input/output error occurs
+     * @throws IOException if an input/output error occurs
      */
     public void unload() throws IOException;
 
@@ -379,9 +378,8 @@ public interface Manager {
      *
      * @param name  The attribute name
      * @param value The attribute value
-     *
      * @return {@code true} if the Manager would distribute the given attribute
-     *         otherwise {@code false}
+     * otherwise {@code false}
      */
     public boolean willAttributeDistribute(String name, Object value);
 
@@ -397,7 +395,7 @@ public interface Manager {
      * The default value is {@code false}.
      *
      * @return {@code true} if the listener will be notified, {@code false} if
-     *         it will not
+     * it will not
      */
     public default boolean getNotifyBindingListenerOnUnchangedValue() {
         return false;
@@ -418,7 +416,7 @@ public interface Manager {
      *                                              false} it will not
      */
     public void setNotifyBindingListenerOnUnchangedValue(
-            boolean notifyBindingListenerOnUnchangedValue);
+        boolean notifyBindingListenerOnUnchangedValue);
 
 
     /**
@@ -432,7 +430,7 @@ public interface Manager {
      * The default value is {@code true}.
      *
      * @return {@code true} if the listener will be notified, {@code false} if
-     *         it will not
+     * it will not
      */
     public default boolean getNotifyAttributeListenerOnUnchangedValue() {
         return true;
@@ -452,5 +450,5 @@ public interface Manager {
      *                                                false} it will not
      */
     public void setNotifyAttributeListenerOnUnchangedValue(
-            boolean notifyAttributeListenerOnUnchangedValue);
+        boolean notifyAttributeListenerOnUnchangedValue);
 }

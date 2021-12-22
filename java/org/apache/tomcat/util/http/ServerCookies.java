@@ -19,6 +19,7 @@ package org.apache.tomcat.util.http;
 import org.apache.tomcat.util.res.StringManager;
 
 /**
+ * 该class不是线程安全的,里面封装了cookie数组
  * This class is not thread-safe.
  */
 public class ServerCookies {
@@ -40,16 +41,17 @@ public class ServerCookies {
      * Register a new, initialized cookie. Cookies are recycled, and most of the
      * time an existing ServerCookie object is returned. The caller can set the
      * name/value and attributes for the cookie.
+     *
      * @return the new cookie
      */
     public ServerCookie addCookie() {
         if (limit > -1 && cookieCount >= limit) {
             throw new IllegalArgumentException(
-                    sm.getString("cookies.maxCountFail", Integer.valueOf(limit)));
+                sm.getString("cookies.maxCountFail", Integer.valueOf(limit)));
         }
 
         if (cookieCount >= serverCookies.length) {
-            int newSize = limit > -1 ? Math.min(2*cookieCount, limit) : 2*cookieCount;
+            int newSize = limit > -1 ? Math.min(2 * cookieCount, limit) : 2 * cookieCount;
             ServerCookie scookiesTmp[] = new ServerCookie[newSize];
             System.arraycopy(serverCookies, 0, scookiesTmp, 0, cookieCount);
             serverCookies = scookiesTmp;

@@ -45,20 +45,20 @@ final class StandardEngineValve extends ValveBase {
     // --------------------------------------------------------- Public Methods
 
     /**
+     * 该方法主要是选择合适的Host，然后调用Host中pipeline的第一个Valve的invoke()方法
      * Select the appropriate child Host to process this request,
      * based on the requested server name.  If no matching Host can
      * be found, return an appropriate HTTP error.
      *
-     * @param request Request to be processed
+     * @param request  Request to be processed
      * @param response Response to be produced
-     *
-     * @exception IOException if an input/output error occurred
-     * @exception ServletException if a servlet error occurred
+     * @throws IOException      if an input/output error occurred
+     * @throws ServletException if a servlet error occurred
      */
     @Override
     public final void invoke(Request request, Response response)
         throws IOException, ServletException {
-
+        //校验该Engline 容器是否含有Host容器，如果不存在，返回400错误
         // Select the Host to be used for this Request
         Host host = request.getHost();
         if (host == null) {

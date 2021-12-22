@@ -71,6 +71,7 @@ public interface Valve {
 
 
     /**
+     * 后台执行逻辑，主要在类加载上下文中使用到
      * Execute a periodic task, such as reloading, etc. This method will be
      * invoked inside the classloading context of this container. Unexpected
      * throwables will be caught and logged.
@@ -79,6 +80,7 @@ public interface Valve {
 
 
     /**
+     * 执行业务逻辑
      * <p>Perform request processing as required by this Valve.</p>
      *
      * <p>An individual Valve <b>MAY</b> perform the following actions, in
@@ -128,5 +130,10 @@ public interface Valve {
         throws IOException, ServletException;
 
 
+    /**
+     * 是否异步执行
+     *
+     * @return
+     */
     public boolean isAsyncSupported();
 }

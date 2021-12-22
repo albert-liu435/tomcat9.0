@@ -21,6 +21,7 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Manager;
 
 /**
+ * ToString工具类
  * Utility class used to help generate return values for calls to
  * {@link Object#toString()}.
  */
@@ -47,7 +48,7 @@ public class ToStringUtil {
 
 
     private static final String containedToString(Object contained, Object container,
-            String containerTypeName) {
+                                                  String containerTypeName) {
         StringBuilder sb = new StringBuilder(contained.getClass().getSimpleName());
         sb.append('[');
         if (container == null) {

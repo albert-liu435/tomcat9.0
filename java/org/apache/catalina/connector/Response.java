@@ -619,6 +619,7 @@ public class Response implements HttpServletResponse {
 
 
     /**
+     * 重置response里面的数据，即清除buffer中的数据
      * Clear any content written to the buffer.
      *
      * @throws IllegalStateException if this response has already

@@ -565,6 +565,7 @@ public interface HttpServletResponse extends ServletResponse {
     public static final int SC_EXPECTATION_FAILED = 417;
 
     /**
+     * 500错误
      * Status code (500) indicating an error inside the HTTP server which
      * prevented it from fulfilling the request.
      */
