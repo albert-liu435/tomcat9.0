@@ -458,6 +458,7 @@ public final class Bootstrap {
 
 
     /**
+     * 方法主入口
      * Main method and entry point when starting Tomcat via the provided
      * scripts.
      *
@@ -473,6 +474,7 @@ public final class Bootstrap {
                 //直到init()方法完成
                 Bootstrap bootstrap = new Bootstrap();
                 try {
+                    //初始化操作
                     bootstrap.init();
                 } catch (Throwable t) {
                     handleThrowable(t);

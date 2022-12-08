@@ -64,6 +64,7 @@ import org.apache.tomcat.util.net.jsse.JSSESupport;
 
 /**
  * NIO定制的线程池，提供以下服务：socket接受线程，socket轮询线程，worker线程池
+ * 用来处理底层的Socket的网络连接，因此Endpoint是用来实现TCP/IP协议的，而Processor用来实现HTTP协议的，Adapter将请求适配到Servlet容器进行具体的处理
  * NIO tailored thread pool, providing the following services:
  * <ul>
  * <li>Socket acceptor thread</li>
