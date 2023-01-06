@@ -546,7 +546,7 @@ public class Connector extends LifecycleMBeanBase {
     }
 
 
-    /**
+    /**默认为post
      * Set list of HTTP methods which should allow body parameter
      * parsing. This defaults to <code>POST</code>.
      *

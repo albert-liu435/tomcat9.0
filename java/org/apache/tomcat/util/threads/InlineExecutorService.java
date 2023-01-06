@@ -21,6 +21,9 @@ import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 线程执行器
+ */
 public class InlineExecutorService extends AbstractExecutorService {
 
     private volatile boolean shutdown;

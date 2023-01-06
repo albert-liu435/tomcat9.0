@@ -217,7 +217,7 @@ public class StandardService extends LifecycleMBeanBase implements Service {
 
     // --------------------------------------------------------- Public Methods
 
-    /**
+    /**添加新的连接器
      * Add a new Connector to the set of defined Connectors, and associate it
      * with this Service's Container.
      *
@@ -564,7 +564,7 @@ public class StandardService extends LifecycleMBeanBase implements Service {
 
         // Initialize mapper listener
         mapperListener.init();
-
+        //初始化connector
         // Initialize our defined Connectors
         synchronized (connectorsLock) {
             for (Connector connector : connectors) {
