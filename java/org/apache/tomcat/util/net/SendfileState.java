@@ -24,7 +24,8 @@ public enum SendfileState {
      */
     PENDING,
 
-    /**文件已完全发送。Sendfile不再使用套接字。
+    /**
+     * 文件已完全发送。Sendfile不再使用套接字。
      * The file has been fully sent. Sendfile is no longer using the socket.
      */
     DONE,

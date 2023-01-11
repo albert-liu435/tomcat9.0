@@ -207,7 +207,8 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel, SocketChannel>
         return this.selectorTimeout;
     }
 
-    /** socket poller
+    /**
+     * socket poller
      * The socket poller.
      */
     private Poller poller = null;
@@ -676,7 +677,7 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel, SocketChannel>
         //线程安全的同步队列
         private final SynchronizedQueue<PollerEvent> events =
             new SynchronizedQueue<>();
-
+        //是否close
         private volatile boolean close = false;
         // Optimize expiration handling
         private long nextExpiration = 0;
@@ -1243,6 +1244,12 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel, SocketChannel>
             return interestOps;
         }
 
+        /**
+         * 设置感兴趣的事件
+         *
+         * @param ops
+         * @return
+         */
         public int interestOps(int ops) {
             this.interestOps = ops;
             return ops;

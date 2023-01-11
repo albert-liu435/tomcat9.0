@@ -69,6 +69,8 @@ public interface Server extends Lifecycle {
 
 
     /**
+     * 监听shudown命令的端口
+     *
      * @return the port number we listen to for shutdown commands.
      * @see #getPortOffset()
      * @see #getPortWithOffset()
@@ -77,6 +79,7 @@ public interface Server extends Lifecycle {
 
 
     /**
+     * 设置监听shutdown命令的端口
      * Set the port number we listen to for shutdown commands.
      *
      * @param port The new port number

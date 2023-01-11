@@ -17,6 +17,7 @@
 package org.apache.tomcat.util.net;
 
 /**
+ * socket事件枚举值
  * Defines events that occur per socket that require further processing by the
  * container. Usually these events are triggered by the socket implementation
  * but they may be triggered by the container.

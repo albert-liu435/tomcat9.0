@@ -154,7 +154,8 @@ public class SocketProperties {
      */
     protected Integer soLingerTime = null;
 
-    /**超时时间
+    /**
+     * 超时时间
      * SO_TIMEOUT option. default is 20000.
      */
     protected Integer soTimeout = Integer.valueOf(20000);
@@ -386,6 +387,11 @@ public class SocketProperties {
         this.tcpNoDelay = Boolean.valueOf(tcpNoDelay);
     }
 
+    /**
+     * 设置超时时间
+     *
+     * @param soTimeout
+     */
     public void setSoTimeout(int soTimeout) {
         this.soTimeout = Integer.valueOf(soTimeout);
     }

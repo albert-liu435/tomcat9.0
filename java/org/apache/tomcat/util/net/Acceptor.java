@@ -50,11 +50,12 @@ public class Acceptor<U> implements Runnable {
      * endpoint.stop() and endpoint.start() in quick succession can cause the
      * acceptor to continue running when it should terminate.
      */
-    private volatile boolean stopCalled = false;
+    private volatile boolean stopCalled = false;//这是是停止的指令
     private final CountDownLatch stopLatch = new CountDownLatch(1);
     protected volatile AcceptorState state = AcceptorState.NEW;
 
-
+    //AbstractProtocol.start();
+    //在NioEndpoint.startInternal();AbstractEndpoint.startAcceptorThread()方法中启动
     public Acceptor(AbstractEndpoint<?, U> endpoint) {
         this.endpoint = endpoint;
     }
@@ -75,6 +76,7 @@ public class Acceptor<U> implements Runnable {
     }
 
 
+    //这里用来接受外部的http请求的socket连接
     @Override
     public void run() {
 
@@ -213,7 +215,7 @@ public class Acceptor<U> implements Runnable {
     }
 
 
-    /**
+    /**停止指令
      * Signals the Acceptor to stop, optionally waiting for that stop process
      * to complete before returning. If a wait is requested and the stop does
      * not complete in that time a warning will be logged.
@@ -266,6 +268,7 @@ public class Acceptor<U> implements Runnable {
     }
 
 
+    //Acceptor枚举值
     public enum AcceptorState {
         NEW, RUNNING, PAUSED, ENDED
     }

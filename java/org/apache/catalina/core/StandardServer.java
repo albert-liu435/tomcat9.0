@@ -64,6 +64,7 @@ import org.apache.tomcat.util.threads.TaskThreadFactory;
 
 /**
  * 在Tomcat启动时，只需要启动一个Server组件，就会启动所有的容器及对应的组件，并且触发这些容器的监听者，完成启动过程的设置。可以说是“一键式”启动的。停止过程也是一样。
+ * 是指整个 Tomcat 服务器，包含多组服务，负责管理和启动各个Service，同时监听 8005 端口发过来的 shutdown 命令，用于关闭整个容器; org.apache.catalina.core.StandardServer
  * Standard implementation of the <b>Server</b> interface, available for use
  * (but not required) when deploying and starting Catalina.
  *

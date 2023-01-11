@@ -779,6 +779,11 @@ public abstract class AbstractEndpoint<S, U> {
         return socketProperties.getSoTimeout();
     }
 
+    /**
+     * 设置超时时间
+     *
+     * @param soTimeout
+     */
     public void setConnectionTimeout(int soTimeout) {
         socketProperties.setSoTimeout(soTimeout);
     }

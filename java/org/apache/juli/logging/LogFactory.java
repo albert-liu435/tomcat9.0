@@ -23,32 +23,33 @@ import java.util.logging.LogManager;
 
 import aQute.bnd.annotation.spi.ServiceConsumer;
 
-/**Juli日志工厂
+/**
+ * Juli日志工厂
  * This is a modified LogFactory that uses a simple {@link ServiceLoader} based
  * discovery mechanism with a default of using JDK based logging. An
  * implementation that uses the full Commons Logging discovery mechanism is
  * available as part of the Tomcat extras download.
- *
+ * <p>
  * Why? It is an attempt to strike a balance between simpler code (no discovery)
  * and providing flexibility - particularly for those projects that embed Tomcat
  * or some of Tomcat's components - is an alternative logging
  * implementation is desired.
- *
+ * <p>
  * Note that this implementation is not just a wrapper around JDK logging (like
  * the original commons-logging impl). It adds 2 features - a simpler
  * configuration  (which is in fact a subset of log4j.properties) and a
  * formatter that is less ugly.
- *
+ * <p>
  * The removal of 'abstract' preserves binary backward compatibility. It is
  * possible to preserve the abstract - and introduce another (hardcoded) factory
  * - but I see no benefit.
- *
+ * <p>
  * Since this class is not intended to be extended - all protected methods are
  * removed. This can be changed - but again, there is little value in keeping
  * dead code. Just take a quick look at the removed code ( and it's complexity).
- *
+ * <p>
  * --------------
- *
+ * <p>
  * Original comment:
  * <p>Factory for creating {@link Log} instances, with discovery and
  * configuration features similar to that employed by standard Java APIs
@@ -58,12 +59,11 @@ import aQute.bnd.annotation.spi.ServiceConsumer;
  * based on the SAXParserFactory and DocumentBuilderFactory implementations
  * (corresponding to the JAXP pluggability APIs) found in Apache Xerces.</p>
  *
- *
  * @author Craig R. McClanahan
  * @author Costin Manolache
  * @author Richard A. Sitze
  */
-@ServiceConsumer(value=org.apache.juli.logging.Log.class)
+@ServiceConsumer(value = org.apache.juli.logging.Log.class)
 public class LogFactory {
     //单例工厂实例
     private static final LogFactory singleton = new LogFactory();
@@ -85,23 +85,23 @@ public class LogFactory {
          * This can be removed once the oldest JRE supported by Tomcat includes
          * a fix.
          */
+        //默认的文件系统，通过调用FileSystems.getDefault 方法，提供访问java虚拟机的文件系统，FileSystems类定义方法创建文件系统它提供对其它文件类型的访问。
         FileSystems.getDefault();
-
+        //META-INF/services/
         // Look via a ServiceLoader for a Log implementation that has a
         // constructor taking the String name.
         ServiceLoader<Log> logLoader = ServiceLoader.load(Log.class);
-        Constructor<? extends Log> m=null;
-        for (Log log: logLoader) {
-            Class<? extends Log> c=log.getClass();
+        Constructor<? extends Log> m = null;
+        for (Log log : logLoader) {
+            Class<? extends Log> c = log.getClass();
             try {
-                m=c.getConstructor(String.class);
+                m = c.getConstructor(String.class);
                 break;
-            }
-            catch (NoSuchMethodException | SecurityException e) {
+            } catch (NoSuchMethodException | SecurityException e) {
                 throw new Error(e);
             }
         }
-        discoveredLogConstructor=m;
+        discoveredLogConstructor = m;
     }
 
 
@@ -120,15 +120,14 @@ public class LogFactory {
      * call with the same name argument.</p>
      *
      * @param name Logical name of the <code>Log</code> instance to be
-     *  returned (the meaning of this name is only known to the underlying
-     *  logging implementation that is being wrapped)
-     *
+     *             returned (the meaning of this name is only known to the underlying
+     *             logging implementation that is being wrapped)
      * @return A log instance with the requested name
-     *
-     * @exception LogConfigurationException if a suitable <code>Log</code>
-     *  instance cannot be returned
+     * @throws LogConfigurationException if a suitable <code>Log</code>
+     *                                   instance cannot be returned
      */
     public Log getInstance(String name) throws LogConfigurationException {
+        //没有发现的话，直接使用DirectJDKLog
         if (discoveredLogConstructor == null) {
             return DirectJDKLog.getInstance(name);
         }
@@ -146,14 +145,12 @@ public class LogFactory {
      * call <code>getInstance(String)</code> with it.
      *
      * @param clazz Class for which a suitable Log name will be derived
-     *
      * @return A log instance with a name of clazz.getName()
-     *
-     * @exception LogConfigurationException if a suitable <code>Log</code>
-     *  instance cannot be returned
+     * @throws LogConfigurationException if a suitable <code>Log</code>
+     *                                   instance cannot be returned
      */
     public Log getInstance(Class<?> clazz) throws LogConfigurationException {
-        return getInstance( clazz.getName());
+        return getInstance(clazz.getName());
     }
 
 
@@ -186,9 +183,8 @@ public class LogFactory {
      * on the corresponding <code>LogFactory</code> instance.</p>
      *
      * @return The singleton LogFactory instance
-     *
-     * @exception LogConfigurationException if the implementation class is not
-     *  available or cannot be instantiated.
+     * @throws LogConfigurationException if the implementation class is not
+     *                                   available or cannot be instantiated.
      */
     public static LogFactory getFactory() throws LogConfigurationException {
         return singleton;
@@ -200,11 +196,9 @@ public class LogFactory {
      * having to care about factories.
      *
      * @param clazz Class from which a log name will be derived
-     *
      * @return A log instance with a name of clazz.getName()
-     *
-     * @exception LogConfigurationException if a suitable <code>Log</code>
-     *  instance cannot be returned
+     * @throws LogConfigurationException if a suitable <code>Log</code>
+     *                                   instance cannot be returned
      */
     public static Log getLog(Class<?> clazz)
         throws LogConfigurationException {
@@ -217,13 +211,11 @@ public class LogFactory {
      * having to care about factories.
      *
      * @param name Logical name of the <code>Log</code> instance to be
-     *  returned (the meaning of this name is only known to the underlying
-     *  logging implementation that is being wrapped)
-     *
+     *             returned (the meaning of this name is only known to the underlying
+     *             logging implementation that is being wrapped)
      * @return A log instance with the requested name
-     *
-     * @exception LogConfigurationException if a suitable <code>Log</code>
-     *  instance cannot be returned
+     * @throws LogConfigurationException if a suitable <code>Log</code>
+     *                                   instance cannot be returned
      */
     public static Log getLog(String name)
         throws LogConfigurationException {
@@ -244,7 +236,7 @@ public class LogFactory {
         // need to use the passed in classLoader, the default implementation
         // does not so calling reset in that case will break things
         if (!LogManager.getLogManager().getClass().getName().equals(
-                "java.util.logging.LogManager")) {
+            "java.util.logging.LogManager")) {
             LogManager.getLogManager().reset();
         }
     }

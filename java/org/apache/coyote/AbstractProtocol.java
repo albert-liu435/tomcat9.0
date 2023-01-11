@@ -381,6 +381,11 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
         return endpoint.getConnectionTimeout();
     }
 
+    /**
+     * 设置超时时间
+     *
+     * @param timeout
+     */
     public void setConnectionTimeout(int timeout) {
         endpoint.setConnectionTimeout(timeout);
     }
@@ -514,7 +519,8 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
 
     // -------------------------------------------------------- Abstract methods
 
-    /**具体的实现需要提供对其记录器的访问，以供抽象类使用。
+    /**
+     * 具体的实现需要提供对其记录器的访问，以供抽象类使用。
      * Concrete implementations need to provide access to their logger to be
      * used by the abstract classes.
      *
@@ -840,7 +846,9 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
 
     // ------------------------------------------- Connection handler base class
 
-    /**连接处理器
+    /**
+     * 连接处理器
+     *
      * @param <S>
      */
     protected static class ConnectionHandler<S> implements AbstractEndpoint.Handler<S> {
@@ -1292,6 +1300,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
             }
         }
     }
+
     //线程安全的栈
     protected static class RecycledProcessors extends SynchronizedStack<Processor> {
 
